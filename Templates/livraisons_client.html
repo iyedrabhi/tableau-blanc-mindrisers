@@ -1,0 +1,19 @@
+<h1>Mes livraisons</h1>
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Statut</th>
+        <th>Adresse</th>
+    </tr>
+
+    {% for l in livraisons %}
+    <tr>
+        <td>{{ l.get_statut_display }}</td>
+        <td>{{ l.adresse_complete }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="2">Aucune livraison trouvée.</td>
+    </tr>
+    {% endfor %}
+</table>

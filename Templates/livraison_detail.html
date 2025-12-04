@@ -1,0 +1,14 @@
+<h2>Détail de la livraison #{{ livraison.id }}</h2>
+
+<ul>
+    <li><strong>Statut :</strong> {{ livraison.get_statut_display }}</li>
+    <li><strong>Date sortie :</strong> {{ livraison.date_sortie }}</li>
+    <li><strong>Date arrivée :</strong> {{ livraison.date_arrivee|default:"-" }}</li>
+    <li><strong>Commande :</strong> {{ livraison.id_commande }}</li>
+    <li><strong>Livreur :</strong> {{ livraison.id_livreur|default:"Non affecté" }}</li>
+    <li><strong>Client :</strong> {{ livraison.id_client|default:"Non renseigné" }}</li>
+    <li><strong>Adresse :</strong> {{ livraison.adresse_complete }}</li>
+    <li><strong>Localisation GPS :</strong> {{ livraison.latitude }}, {{ livraison.longitude }}</li>
+</ul>
+
+<a href="{% url 'livraison_list' %}">Retour</a>
