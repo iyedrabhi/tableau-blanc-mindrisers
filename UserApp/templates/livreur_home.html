@@ -1,0 +1,380 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <base href="{% static '' %}">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0">
+    <title>Livreur Dashboard - Food Funday</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link id="changeable-colors" rel="stylesheet" href="css/colors/orange.css" />
+    <script src="js/modernizer.js"></script>
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <style>
+        .dropdown-menu {
+            animation: slideIn 0.3s ease-in-out;
+            position: absolute;
+            overflow: hidden;
+            width: 200px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-menu li a {
+            padding: 10px 20px;
+            display: block;
+            transition: all 0.2s;
+        }
+
+        .dropdown-menu li a:hover {
+            padding-left: 25px;
+        }
+
+        .dropdown-menu .divider {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="loader"><div id="status"></div></div>
+    <div id="site-header">
+        <header id="header" class="header-block-top">
+            <div class="container">
+                <div class="row">
+                    <div class="main-menu">
+                        <nav class="navbar navbar-default" id="mainNav">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <div class="logo">
+                                    <a class="navbar-brand js-scroll-trigger logo-header" href="#">
+                                        <img src="images/logo.png" alt="">
+                                    </a>
+                                </div>
+                            </div>
+                            <div id="navbar" class="navbar-collapse collapse">
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li class="active"><a href="#banner">Home</a></li>
+                                    <li><a href="#about">About us</a></li>
+                                    <li><a href="#deliveries">My Deliveries</a></li>
+                                    <li><a href="#stats">Stats</a></li>
+                                    <li><a href="#gallery">Gallery</a></li>
+                                    <li><a href="#footer">Contact us</a></li>
+
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            My Profile <span class="caret"></span>
+                                        </a>
+
+                                        <ul class="dropdown-menu slideIn">
+                                            <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+    <div id="banner" class="banner full-screen-mode parallax">
+        <div class="container pr">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="banner-static">
+                    <div class="banner-text">
+                        <div class="banner-cell">
+                            <h1>Welcome, Livreur!</h1>
+                            <h2>Your delivery dashboard for Food Funday</h2>
+                            <p>Manage your deliveries, track your performance, and ensure customer satisfaction.</p>
+                            <div class="book-btn">
+                                <a href="#deliveries" class="table-btn hvr-underline-from-center">View My Deliveries</a>
+                            </div>
+                            <a href="#about">
+                                <div class="mouse"></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="about" class="about-main pad-top-100 pad-bottom-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
+                        <h2 class="block-title"> About Food Funday </h2>
+                        <h3>Delivering Happiness!</h3>
+                        <p>Welcome to your livreur dashboard. Here you can view assigned deliveries, track your performance stats, and manage your delivery schedule. Keep up the great work bringing joy to our customers!</p>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
+                        <div class="about-images">
+                            <img class="about-main" src="images/about-main.jpg" alt="About Main Image">
+                            <img class="about-inset" src="images/about-inset.jpg" alt="About Inset Image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="deliveries" class="menu-main pad-top-100 pad-bottom-100">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
+                        <h2 class="block-title text-center">My Deliveries</h2>
+                        <p class="title-caption text-center">View and manage your assigned deliveries below.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 30px;">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Client Name</th>
+                                <th>Delivery Address</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#12345</td>
+                                <td>John Doe</td>
+                                <td>123 Main St, City Center</td>
+                                <td><span class="label label-warning">Pending</span></td>
+                                <td><a href="#" class="btn btn-success btn-sm">Mark Delivered</a></td>
+                            </tr>
+                            <tr>
+                                <td>#12346</td>
+                                <td>Jane Smith</td>
+                                <td>456 Elm St, Downtown</td>
+                                <td><span class="label label-info">In Transit</span></td>
+                                <td><a href="#" class="btn btn-success btn-sm">Mark Delivered</a></td>
+                            </tr>
+                            <tr>
+                                <td>#12347</td>
+                                <td>Bob Johnson</td>
+                                <td>789 Oak Ave, Suburbs</td>
+                                <td><span class="label label-success">Delivered</span></td>
+                                <td><button class="btn btn-default btn-sm" disabled>Completed</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="stats" class="special-menu pad-top-100 parallax">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
+                        <h2 class="block-title color-white text-center"> Your Performance </h2>
+                        <h5 class="title-caption text-center">Track your delivery statistics and achievements</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 50px;">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="qty-box">
+                        <div class="icon-box"><i class="flaticon-truck"></i></div>
+                        <h3 class="color-white">Total Deliveries</h3>
+                        <p class="lead color-white">248</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="qty-box">
+                        <div class="icon-box"><i class="flaticon-chef"></i></div>
+                        <h3 class="color-white">This Week</h3>
+                        <p class="lead color-white">15</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="qty-box">
+                        <div class="icon-box"><i class="flaticon-star"></i></div>
+                        <h3 class="color-white">Customer Rating</h3>
+                        <p class="lead color-white">4.8/5</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="qty-box">
+                        <div class="icon-box"><i class="flaticon-clock-1"></i></div>
+                        <h3 class="color-white">On-Time Rate</h3>
+                        <p class="lead color-white">96%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gallery" class="gallery-main pad-top-100 pad-bottom-100">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
+                        <h2 class="block-title text-center"> Delivery Gallery </h2>
+                        <p class="title-caption text-center">Highlights from our delivery team in action</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 gallery-item">
+                    <div class="gallery-img">
+                        <img src="images/gallery-01.jpg" alt="" />
+                        <div class="hover-mask"></div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 gallery-item">
+                    <div class="gallery-img">
+                        <img src="images/gallery-02.jpg" alt="" />
+                        <div class="hover-mask"></div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 gallery-item">
+                    <div class="gallery-img">
+                        <img src="images/gallery-03.jpg" alt="" />
+                        <div class="hover-mask"></div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 gallery-item">
+                    <div class="gallery-img">
+                        <img src="images/gallery-04.jpg" alt="" />
+                        <div class="hover-mask"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer" class="footer-main">
+        <div class="footer-news pad-top-100 pad-bottom-70 parallax">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
+                            <h2 class="ft-title color-white text-center"> Newsletter </h2>
+                            <p>Stay updated with delivery tips, news, and exclusive offers for our team.</p>
+                        </div>
+                        <form>
+                            <input type="email" placeholder="Enter your e-mail id">
+                            <a href="#" class="orange-btn"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-box pad-top-70">
+            <div class="container">
+                <div class="row">
+                    <div class="footer-in-main">
+                        <div class="footer-logo">
+                            <div class="text-center">
+                                <img src="images/logo.png" alt="" />
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                            <div class="footer-box-a">
+                                <h3>About Us</h3>
+                                <p>Delivering happiness, one meal at a time. Join our team and be part of something special!</p>
+                                <ul class="socials-box footer-socials pull-left">
+                                    <li><a href="#"><div class="social-circle-border"><i class="fa  fa-facebook"></i></div></a></li>
+                                    <li><a href="#"><div class="social-circle-border"><i class="fa fa-twitter"></i></div></a></li>
+                                    <li><a href="#"><div class="social-circle-border"><i class="fa fa-google-plus"></i></div></a></li>
+                                    <li><a href="#"><div class="social-circle-border"><i class="fa fa-pinterest"></i></div></a></li>
+                                    <li><a href="#"><div class="social-circle-border"><i class="fa fa-linkedin"></i></div></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                            <div class="footer-box-b">
+                                <h3>Quick Links</h3>
+                                <ul>
+                                    <li><a href="#banner">Home</a></li>
+                                    <li><a href="#about">About</a></li>
+                                    <li><a href="#deliveries">Deliveries</a></li>
+                                    <li><a href="#stats">Stats</a></li>
+                                    <li><a href="#gallery">Gallery</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                            <div class="footer-box-c">
+                                <h3>Contact Us</h3>
+                                <p><i class="fa fa-map-signs" aria-hidden="true"></i> <span>6 E Esplanade, St Albans VIC 3021, Australia</span></p>
+                                <p><i class="fa fa-mobile" aria-hidden="true"></i> <span>+91 80005 89080</span></p>
+                                <p><i class="fa fa-envelope" aria-hidden="true"></i> <span><a href="#">support@foodfunday.com</a></span></p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                            <div class="footer-box-d">
+                                <h3>Delivery Hours</h3>
+                                <ul>
+                                    <li><p>Monday - Thursday </p><span> 11:00 AM - 9:00 PM</span></li>
+                                    <li><p>Friday - Saturday </p><span>  11:00 AM - 11:00 PM</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="copyright" class="copyright-main">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <h6 class="copy-title"> Copyright &copy; 2018 Food Funday is powered by <a href="https://themewagon.com/" target="_blank">ThemeWagon</a> </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" class="scrollup" style="display: none;">Scroll</a>
+    <section id="color-panel" class="close-color-panel">
+        <a class="panel-button gray2"><i class="fa fa-cog fa-spin fa-2x"></i></a>
+        <div class="segment">
+            <h4 class="gray2 normal no-padding">Color Scheme</h4>
+            <a title="orange" class="switcher orange-bg"></a>
+            <a title="strong-blue" class="switcher strong-blue-bg"></a>
+            <a title="moderate-green" class="switcher moderate-green-bg"></a>
+            <a title="vivid-yellow" class="switcher vivid-yellow-bg"></a>
+        </div>
+    </section>
+    <script src="js/all.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/custom.js"></script>
+</body>
+</html>

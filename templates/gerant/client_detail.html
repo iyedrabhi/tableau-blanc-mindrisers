@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="{% static '' %}">
+    <meta charset="utf-8">
+    <title>Client Details - Food Funday</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+
+<!-- Header -->
+<div id="site-header">
+    <header id="header" class="header-block-top">
+        <div class="container">
+            <nav class="navbar navbar-default" id="mainNav">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#navbar" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="logo">
+                        <a class="navbar-brand js-scroll-trigger logo-header" href="#">
+                            <img src="images/logo.png" alt="">
+                        </a>
+                    </div>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{% url 'gerant_dashboard' %}">Dashboard</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+</div>
+
+<!-- Content -->
+<div class="container pad-top-100 pad-bottom-100">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-sm-10">
+            <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
+                <h2 class="block-title text-center">Client Details</h2>
+                <p class="title-caption text-center">
+                    Full profile and management options for this client.
+                </p>
+                <div class="register-box" style="background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); padding: 40px;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Username:</strong> {{ client.username }}</p>
+                            <p><strong>Email:</strong> {{ client.email }}</p>
+                            <p><strong>First Name:</strong> {{ client.first_name }}</p>
+                            <p><strong>Last Name:</strong> {{ client.last_name }}</p>
+                            <p><strong>Phone:</strong> {{ client.phone_number|default:"N/A" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Location:</strong> {{ client.living_location|default:"N/A" }}</p>
+                            <p><strong>Date of Birth:</strong> {{ client.date_of_birth|default:"N/A" }}</p>
+                            <p><strong>Subscribed:</strong> {% if client.is_subscribed %}Yes{% else %}No{% endif %}</p>
+                            <p><strong>Joined Date:</strong> {{ client.date_joined|date:"M d, Y" }}</p>
+                            <p><strong>Status:</strong> 
+                                {% if client.is_active %}
+                                    <span class="label label-success">Active</span>
+                                {% else %}
+                                    <span class="label label-danger">Inactive</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'client_update' client.pk %}" class="btn btn-warning">Edit</a>
+                        {% if client.is_active %}
+                            <a href="{% url 'client_toggle_active' client.pk %}" class="btn btn-danger" onclick="return confirm('Deactivate this client? They will not be able to log in.');">Deactivate</a>
+                        {% else %}
+                            <a href="{% url 'client_toggle_active' client.pk %}" class="btn btn-success">Activate</a>
+                        {% endif %}
+                        <a href="{% url 'client_delete' client.pk %}" class="btn btn-danger">Delete</a>
+                        <a href="{% url 'clients_list' %}" class="btn btn-secondary">Back to Clients</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div id="footer" class="footer-main">
+    <div class="footer-box pad-top-70">
+        <div class="container">
+            <div class="row footer-in-main">
+                <div class="footer-logo text-center">
+                    <img src="images/logo.png" alt="">
+                </div>
+            </div>
+        </div>
+        <div id="copyright">
+            <div class="container text-center">
+                <h6>© 2018 Food Funday</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/all.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/custom.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="{% static '' %}">
+    <meta charset="utf-8">
+    <title>{{ action }} Livreur - Food Funday</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- Header -->
+<div id="site-header">
+    <header id="header" class="header-block-top">
+        <div class="container">
+            <nav class="navbar navbar-default" id="mainNav">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#navbar" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="logo">
+                        <a class="navbar-brand js-scroll-trigger logo-header" href="#">
+                            <img src="images/logo.png" alt="">
+                        </a>
+                    </div>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{% url 'gerant_dashboard' %}">Dashboard</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+</div>
+
+<!-- Content -->
+<div class="container pad-top-100 pad-bottom-100">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-sm-10">
+            <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
+
+                <h2 class="block-title text-center">{{ action }} Livreur</h2>
+                <p class="title-caption text-center">Fill out the form below to {{ action|lower }} a delivery person.</p>
+
+                <div class="register-box" style="background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); padding: 40px;">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            {% for field in form %}
+                                {% if field.field.widget.input_type == 'checkbox' %}
+                                    <div class="col-12 mb-3">
+                                        <div class="form-check">
+                                            {{ field }}
+                                            <label class="form-check-label">{{ field.label }}</label>
+                                        </div>
+                                        {% if field.help_text %}
+                                            <small class="text-muted">{{ field.help_text }}</small>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">{{ field.label }}</label>
+                                        {{ field }}
+                                        {% if field.errors %}
+                                            <div class="text-danger small">{{ field.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success">{{ action }}</button>
+                            <a href="{% url 'livreurs_list' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div id="footer" class="footer-main">
+    <div class="footer-box pad-top-70">
+        <div class="container">
+            <div class="row footer-in-main">
+                <div class="footer-logo text-center">
+                    <img src="images/logo.png" alt="">
+                </div>
+            </div>
+        </div>
+        <div id="copyright">
+            <div class="container text-center">
+                <h6>© 2018 Food Funday</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/all.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/custom.js"></script>
+<style>
+    input[type="text"], input[type="email"], input[type="date"], input[type="password"], select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+    }
+</style>
+</body>
+</html>

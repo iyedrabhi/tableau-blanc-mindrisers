@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base href="{% static '' %}">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0">
+
+    <title>Delete Client - Food Funday</title>
+
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link id="changeable-colors" rel="stylesheet" href="css/colors/orange.css" />
+
+    <script src="js/modernizer.js"></script>
+</head>
+
+<body>
+    <div id="loader">
+        <div id="status"></div>
+    </div>
+
+    <!-- Header / Navbar -->
+    <div id="site-header">
+        <header id="header" class="header-block-top">
+            <div class="container">
+                <div class="row">
+                    <div class="main-menu">
+                        <nav class="navbar navbar-default" id="mainNav">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                                    data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <div class="logo">
+                                    <a class="navbar-brand js-scroll-trigger logo-header" href="#">
+                                        <img src="images/logo.png" alt="">
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div id="navbar" class="navbar-collapse collapse">
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li><a href="{% url 'gerant_dashboard' %}">Dashboard</a></li>
+                                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                                </ul>
+                            </div>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <!-- Content Section -->
+    <div class="container pad-top-100 pad-bottom-100">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-sm-12">
+
+                <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
+
+                    <div class="card border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <h3 class="mb-0">Delete Client</h3>
+                        </div>
+
+                        <div class="card-body">
+
+                            <p class="lead">
+                                Are you sure you want to delete the client 
+                                <strong>{{ client.username }}</strong>?
+                            </p>
+
+                            <div class="alert alert-danger">
+                                <strong>Warning:</strong> This action is permanent and cannot be undone.
+                            </div>
+
+                            <form method="POST">
+                                {% csrf_token %}
+
+                                <button type="submit" class="btn btn-danger">
+                                    Yes, Delete
+                                </button>
+
+                                <a href="{% url 'clients_list' %}" class="btn btn-secondary">
+                                    Cancel
+                                </a>
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section (unchanged) -->
+    <div id="footer" class="footer-main">
+        <div class="footer-box pad-top-70">
+
+            <div class="container">
+                <div class="row footer-in-main">
+
+                    <div class="footer-logo text-center">
+                        <img src="images/logo.png" alt="">
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6">
+                        <div class="footer-box-a">
+                            <h3>About Us</h3>
+                            <p>Aenean commodo ligula eget dolor aenean massa. Cum sociis nat penatibu.</p>
+                            <ul class="socials-box footer-socials pull-left">
+                                <li><a href="#"><div class="social-circle-border"><i class="fa fa-facebook"></i></div></a></li>
+                                <li><a href="#"><div class="social-circle-border"><i class="fa fa-twitter"></i></div></a></li>
+                                <li><a href="#"><div class="social-circle-border"><i class="fa fa-google-plus"></i></div></a></li>
+                                <li><a href="#"><div class="social-circle-border"><i class="fa fa-pinterest"></i></div></a></li>
+                                <li><a href="#"><div class="social-circle-border"><i class="fa fa-linkedin"></i></div></a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6">
+                        <div class="footer-box-b">
+                            <h3>New Menu</h3>
+                            <ul>
+                                <li><a href="#">Italian Bomba Sandwich</a></li>
+                                <li><a href="#">Double Dose of Pork Belly</a></li>
+                                <li><a href="#">Spicy Thai Noodles</a></li>
+                                <li><a href="#">Triple Truffle Trotters</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6">
+                        <div class="footer-box-c">
+                            <h3>Contact Us</h3>
+                            <p><i class="fa fa-map-signs"></i> 6 E Esplanade, St Albans VIC 3021, Australia</p>
+                            <p><i class="fa fa-mobile"></i> +91 80005 89080</p>
+                            <p><i class="fa fa-envelope"></i> support@foodfunday.com</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-6">
+                        <div class="footer-box-d">
+                            <h3>Opening Hours</h3>
+                            <ul>
+                                <li><p>Monday - Thursday</p> <span>11:00 AM - 9:00 PM</span></li>
+                                <li><p>Friday - Saturday</p> <span>11:00 AM - 5:00 PM</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="copyright">
+                <div class="container text-center">
+                    <h6>Copyright © 2018 Food Funday</h6>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <a href="#" class="scrollup" style="display: none;">Scroll</a>
+
+    <script src="js/all.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/custom.js"></script>
+
+</body>
+</html>

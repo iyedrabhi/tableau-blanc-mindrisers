@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="gerant-dashboard">
+    <!-- Header Section -->
+    <div class="dashboard-header" style="padding: 80px 0 50px; background: url('{% static "images/footer_background.jpg" %}') center/cover;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="header-content">
+                        <h1 class="block-title color-white text-center" style="margin-bottom: 20px; font-size: 3.5rem;">Gerant Dashboard</h1>
+                        <p class="title-caption color-white text-center" style="margin-bottom: 30px; font-size: 1.3rem;">Manage your restaurant operations efficiently</p>
+                        
+                        <!-- Logout Button -->
+                        <div class="text-center">
+                            <form method="POST" action="{% url 'logout' %}" onsubmit="return confirm('Are you sure you want to logout?')" class="logout-form">
+                                {% csrf_token %}
+                                <button type="submit" class="logout-btn" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 30px; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; font-size: 1.1rem;">
+                                    <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="statistics-main" style="padding: 80px 0; background: #f8f9fa;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <h2 class="block-title text-center" style="color: #2c3e50; margin-bottom: 20px; font-size: 2.5rem;">Overview</h2>
+                    <p class="title-caption text-center" style="color: #7f8c8d; margin-bottom: 50px; font-size: 1.1rem;">Quick overview of your restaurant management</p>
+                </div>
+                
+                <!-- Clients Statistics -->
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="statistics-box" style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; margin-bottom: 30px; border-left: 5px solid #e67e22; transition: all 0.3s ease;">
+                        <div class="statistics-icon" style="font-size: 48px; color: #e67e22; margin-bottom: 20px;">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                        </div>
+                        <div class="statistics-content">
+                            <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.5rem;">Clients Management</h3>
+                            <div class="statistics-number" style="margin: 20px 0;">
+                                <span class="counter" style="font-size: 48px; font-weight: bold; color: #e67e22; display: block;">{{ clients_count }}</span>
+                                <span class="statistics-label" style="font-size: 16px; color: #666; text-transform: uppercase; letter-spacing: 1px;">Total Clients</span>
+                            </div>
+                            <p class="statistics-desc" style="color: #7f8c8d; margin-bottom: 25px; font-size: 1rem;">Manage your restaurant's client database and information</p>
+                            <a href="{% url 'clients_list' %}" class="statistics-btn" style="display: inline-block; color: #e67e22; text-decoration: none; font-weight: bold; padding: 12px 30px; border: 2px solid #e67e22; border-radius: 25px; transition: all 0.3s ease; font-size: 1rem;">
+                                View All Clients <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Livreurs Statistics -->
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="statistics-box" style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; margin-bottom: 30px; border-left: 5px solid #e67e22; transition: all 0.3s ease;">
+                        <div class="statistics-icon" style="font-size: 48px; color: #e67e22; margin-bottom: 20px;">
+                            <i class="fa fa-motorcycle" aria-hidden="true"></i>
+                        </div>
+                        <div class="statistics-content">
+                            <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.5rem;">Delivery Team</h3>
+                            <div class="statistics-number" style="margin: 20px 0;">
+                                <span class="counter" style="font-size: 48px; font-weight: bold; color: #e67e22; display: block;">{{ livreurs_count }}</span>
+                                <span class="statistics-label" style="font-size: 16px; color: #666; text-transform: uppercase; letter-spacing: 1px;">Active Livreurs</span>
+                            </div>
+                            <p class="statistics-desc" style="color: #7f8c8d; margin-bottom: 25px; font-size: 1rem;">Manage your delivery personnel and their schedules</p>
+                            <a href="{% url 'livreurs_list' %}" class="statistics-btn" style="display: inline-block; color: #e67e22; text-decoration: none; font-weight: bold; padding: 12px 30px; border: 2px solid #e67e22; border-radius: 25px; transition: all 0.3s ease; font-size: 1rem;">
+                                Manage Livreurs <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="quick-actions-main" style="padding: 80px 0; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <h2 class="block-title color-white text-center" style="margin-bottom: 20px; font-size: 2.5rem;">Quick Actions</h2>
+                    <p class="title-caption color-white text-center" style="margin-bottom: 50px; font-size: 1.1rem;">Fast access to frequently used features</p>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="quick-action-item" style="background: rgba(255,255,255,0.1); padding: 40px; border-radius: 15px; margin-bottom: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease; backdrop-filter: blur(10px);">
+                        <div class="action-icon" style="font-size: 42px; color: #e67e22; margin-bottom: 20px;">
+                            <i class="fa fa-user-plus" aria-hidden="true"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 style="color: white; margin-bottom: 15px; font-size: 1.4rem;">Add New Client</h3>
+                            <p style="color: #ccc; margin-bottom: 25px; font-size: 1rem;">Register a new client to your restaurant database</p>
+                            <a href="{% url 'client_create' %}" class="action-btn" style="display: inline-block; color: #e67e22; text-decoration: none; font-weight: bold; padding: 12px 30px; border: 2px solid #e67e22; border-radius: 25px; transition: all 0.3s ease; font-size: 1rem;">
+                                Create Client <i class="fa fa-plus" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="quick-action-item" style="background: rgba(255,255,255,0.1); padding: 40px; border-radius: 15px; margin-bottom: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease; backdrop-filter: blur(10px);">
+                        <div class="action-icon" style="font-size: 42px; color: #e67e22; margin-bottom: 20px;">
+                            <i class="fa fa-truck" aria-hidden="true"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 style="color: white; margin-bottom: 15px; font-size: 1.4rem;">Add New Livreur</h3>
+                            <p style="color: #ccc; margin-bottom: 25px; font-size: 1rem;">Add a new delivery person to your team</p>
+                            <a href="{% url 'livreur_create' %}" class="action-btn" style="display: inline-block; color: #e67e22; text-decoration: none; font-weight: bold; padding: 12px 30px; border: 2px solid #e67e22; border-radius: 25px; transition: all 0.3s ease; font-size: 1rem;">
+                                Add Livreur <i class="fa fa-plus" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.gerant-dashboard {
+    font-family: 'Arial', sans-serif;
+    margin-top: 0;
+}
+
+/* Navbar background */
+.navbar {
+    background: url('{% static "images/gallery_03.jpg" %}') center/cover !important;
+    border: none !important;
+    min-height: 80px !important; /* Increased navbar height */
+}
+
+.navbar-brand,
+.navbar-nav > li > a {
+    color: white !important;
+    font-weight: bold;
+    font-size: 1.1rem !important; /* Slightly bigger font */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+}
+
+.navbar-brand {
+    font-size: 1.4rem !important; /* Even bigger for brand */
+}
+
+.navbar-nav > li > a:hover {
+    color: #e67e22 !important;
+    background: rgba(255,255,255,0.1) !important;
+}
+
+/* Fix for navbar spacing */
+.navbar-fixed-top {
+    margin-bottom: 0 !important;
+}
+
+/* Hover effects */
+.statistics-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.quick-action-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.15) !important;
+}
+
+.statistics-btn:hover, .action-btn:hover {
+    background: #e67e22 !important;
+    color: white !important;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+.logout-btn:hover {
+    background: white !important;
+    color: #e67e22 !important;
+    transform: translateY(-2px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 60px 0 40px !important;
+    }
+    
+    .statistics-main, .quick-actions-main {
+        padding: 60px 0 !important;
+    }
+    
+    .statistics-box, .quick-action-item {
+        margin-bottom: 25px;
+        padding: 30px 20px !important;
+    }
+    
+    .block-title {
+        font-size: 2rem !important;
+    }
+    
+    .statistics-number .counter {
+        font-size: 36px !important;
+    }
+    
+    .navbar {
+        min-height: 70px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-header {
+        padding: 50px 0 30px !important;
+    }
+    
+    .statistics-main, .quick-actions-main {
+        padding: 50px 0 !important;
+    }
+    
+    .block-title {
+        font-size: 1.8rem !important;
+    }
+}
+</style>
+
+<script>
+// Simple counter animation
+document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.counter');
+    
+    counters.forEach(counter => {
+        const target = parseInt(counter.textContent);
+        let count = 0;
+        const duration = 2000; // 2 seconds
+        const increment = target / (duration / 16); // 60fps
+        
+        const updateCount = () => {
+            if (count < target) {
+                count += increment;
+                counter.textContent = Math.ceil(count);
+                setTimeout(updateCount, 16);
+            } else {
+                counter.textContent = target;
+            }
+        };
+        
+        updateCount();
+    });
+});
+</script>
+{% endblock %}

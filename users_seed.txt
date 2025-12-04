@@ -1,0 +1,120 @@
+==========================================================================================
+FOOD FUNDAY - SEEDED DEMO USERS
+==========================================================================================
+
+GERANTS (Managers) - 5 instances:
+------------------------------------------------------------------------------------------
+Username: gerant1 | Password: Gerant@123
+Email: gerant1@foodfunday.com
+Name: Marcel Dubois | Phone: +33 1 42 56 78 90
+Restaurant: Food Funday Paris
+Address: 6 E Esplanade, St Albans VIC 3021, Australia
+Restaurant Phone: +61 3 9366 1234
+SIRET: 85234567891234 | License: BL-2023-8923
+
+Username: gerant2 | Password: Gerant@123
+Email: gerant2@foodfunday.com
+Name: Isabelle Lefevre | Phone: +33 1 43 67 89 01
+Restaurant: Food Funday Lyon
+Address: 15 Place Bellecour, 69002 Lyon, France
+Restaurant Phone: +33 4 78 92 45 67
+SIRET: 89345678912345 | License: BL-2023-9834
+
+Username: gerant3 | Password: Gerant@123
+Email: gerant3@foodfunday.com
+Name: Thomas Moreau | Phone: +33 1 44 78 90 12
+Restaurant: Food Funday Marseille
+Address: 8 Vieux Port, 13001 Marseille, France
+Restaurant Phone: +33 4 91 33 56 78
+SIRET: 92456789123456 | License: BL-2023-7765
+
+Username: gerant4 | Password: Gerant@123
+Email: gerant4@foodfunday.com
+Name: Céline Garnier | Phone: +33 1 45 89 01 23
+Restaurant: Food Funday Toulouse
+Address: 22 Rue Alsace Lorraine, 31000 Toulouse, France
+Restaurant Phone: +33 5 61 23 45 67
+SIRET: 95567890234567 | License: BL-2023-6654
+
+Username: gerant5 | Password: Gerant@123
+Email: gerant5@foodfunday.com
+Name: Alexandre Rousseau | Phone: +33 1 46 90 12 34
+Restaurant: Food Funday Nice
+Address: 10 Promenade des Anglais, 06000 Nice, France
+Restaurant Phone: +33 4 93 87 65 43
+SIRET: 98678901345678 | License: BL-2023-5543
+
+------------------------------------------------------------------------------------------
+CLIENTS - 5 instances:
+------------------------------------------------------------------------------------------
+Username: client1 | Password: Client@123
+Email: client1@email.com
+Name: Jean Dupont | Phone: +33 6 12 34 56 78
+Address: 45 Rue de la Paix, 75002 Paris, France
+Date of Birth: 1985-03-15 | Subscribed: True
+
+Username: client2 | Password: Client@123
+Email: client2@email.com
+Name: Sophie Martin | Phone: +33 6 23 45 67 89
+Address: 12 Avenue des Champs-Élysées, 75008 Paris, France
+Date of Birth: 1992-07-22 | Subscribed: True
+
+Username: client3 | Password: Client@123
+Email: client3@email.com
+Name: Pierre Bernard | Phone: +33 6 34 56 78 90
+Address: 78 Boulevard Saint-Germain, 75005 Paris, France
+Date of Birth: 1988-11-08 | Subscribed: True
+
+Username: client4 | Password: Client@123
+Email: client4@email.com
+Name: Marie Leroy | Phone: +33 6 45 67 89 01
+Address: 23 Rue du Faubourg Saint-Honoré, 75008 Paris, France
+Date of Birth: 1990-05-30 | Subscribed: True
+
+Username: client5 | Password: Client@123
+Email: client5@email.com
+Name: Lucas Durand | Phone: +33 6 56 78 90 12
+Address: 56 Rue de Rivoli, 75004 Paris, France
+Date of Birth: 1995-01-12 | Subscribed: True
+
+------------------------------------------------------------------------------------------
+LIVREURS (Delivery Personnel) - 5 instances:
+------------------------------------------------------------------------------------------
+Username: livreur1 | Password: Livreur@123
+Email: livreur1@delivery.com
+Name: Antoine Moreau | Phone: +33 6 67 89 01 23
+Vehicle: Scooter (DL-2023-001) | Registration: AB-123-CD
+Insurance: INS-FR-9876543
+Bank Account: FR7612345678901234567890123 | Available: True
+
+Username: livreur2 | Password: Livreur@123
+Email: livreur2@delivery.com
+Name: Camille Roux | Phone: +33 6 78 90 12 34
+Vehicle: Bike (DL-2023-002) | Registration: EF-456-GH
+Insurance: INS-FR-8765432
+Bank Account: FR7698765432109876543210987 | Available: True
+
+Username: livreur3 | Password: Livreur@123
+Email: livreur3@delivery.com
+Name: Nicolas Petit | Phone: +33 6 89 01 23 45
+Vehicle: Motorcycle (DL-2023-003) | Registration: IJ-789-KL
+Insurance: INS-FR-7654321
+Bank Account: FR7687654321098765432109876 | Available: True
+
+Username: livreur4 | Password: Livreur@123
+Email: livreur4@delivery.com
+Name: Emma Girard | Phone: +33 6 90 12 34 56
+Vehicle: Scooter (DL-2023-004) | Registration: MN-012-OP
+Insurance: INS-FR-6543210
+Bank Account: FR7676543210987654321098765 | Available: True
+
+Username: livreur5 | Password: Livreur@123
+Email: livreur5@delivery.com
+Name: Julien Lambert | Phone: +33 6 01 23 45 67
+Vehicle: Car (DL-2023-005) | Registration: QR-345-ST
+Insurance: INS-FR-5432109
+Bank Account: FR7665432109876543210987654 | Available: True
+
+==========================================================================================
+TOTAL: 15 users (5 gerants, 5 clients, 5 livreurs)
+==========================================================================================
