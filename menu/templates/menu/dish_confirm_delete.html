@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Dish | Food Funday</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'menu/css/style.css' %}">
+    
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--light-color);
+            padding: 20px;
+        }
+        
+        .delete-modal {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        
+        .delete-modal h2 {
+            color: var(--danger);
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        .delete-modal p {
+            color: var(--text-color);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .dish-name {
+            font-weight: 700;
+            color: var(--dark-color);
+            font-size: 1.3rem;
+        }
+        
+        .delete-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .btn-delete-confirm {
+            background: var(--danger);
+            color: var(--white);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-delete-confirm:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+            color: var(--white);
+        }
+        
+        .btn-cancel {
+            background: transparent;
+            color: var(--text-color);
+            padding: 12px 30px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-cancel:hover {
+            background: var(--light-color);
+            border-color: var(--text-color);
+            color: var(--text-color);
+        }
+        
+        .warning-icon {
+            font-size: 4rem;
+            color: var(--danger);
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="delete-modal">
+        <div class="warning-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2>Delete Dish</h2>
+        <p>Are you sure you want to delete <span class="dish-name">{{ dish.name }}</span>?</p>
+        <p style="color: var(--text-color); font-size: 0.95rem;">This action cannot be undone.</p>
+        
+        <form method="post" class="delete-actions">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete-confirm">
+                <i class="fas fa-trash"></i> Yes, Delete
+            </button>
+            <a href="{% url 'menu:dish_list' %}" class="btn-cancel">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </form>
+    </div>
+</body>
+</html>

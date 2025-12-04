@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Delete Dish{% endblock %}
+
+{% block content %}
+<div id="menu" class="menu-main pad-top-100 pad-bottom-100">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-lg-offset-3 col-md-offset-3">
+                <div class="offer-item text-center" style="background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <div class="delete-icon" style="font-size: 4rem; color: #dc2626; margin-bottom: 20px;">
+                        <i class="fa fa-exclamation-triangle"></i>
+                    </div>
+                    
+                    <h2 class="block-title" style="color: #dc2626; margin-bottom: 15px;">Confirm Delete</h2>
+                    
+                    <p class="title-caption" style="color: #666; margin: 20px 0; font-size: 1.1rem;">
+                        Are you sure you want to delete this dish? This action cannot be undone.
+                    </p>
+                    
+                    <div class="dish-info" style="background: #f3f4f6; padding: 20px; border-radius: 6px; margin: 30px 0;">
+                        <div class="dish-name" style="font-size: 1.5rem; font-weight: 600; color: #2c2c2c;">{{ dish.name }}</div>
+                        {% if dish.price %}
+                            <div style="color: #ff6b35; font-weight: 700; margin-top: 10px; font-size: 1.3rem;">${{ dish.price }}</div>
+                        {% endif %}
+                        {% if dish.category %}
+                            <div style="margin-top: 10px;">
+                                <span class="badge" style="background: #ff6b35; color: white; padding: 5px 15px; border-radius: 3px;">{{ dish.category }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="actions" style="display: flex; gap: 15px; justify-content: center;">
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-lg" style="min-width: 120px;">
+                                Delete
+                            </button>
+                        </form>
+                        <a href="{% url 'menu:dish_list' %}" class="btn btn-default btn-lg" style="min-width: 120px;">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1052 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Menu | Food Funday</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'menu/css/style.css' %}">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #f7931e;
+            --dark-color: #2c2c2c;
+            --light-color: #f8f9fa;
+            --text-color: #666;
+            --white: #ffffff;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background: var(--white);
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            color: var(--dark-color);
+            font-weight: 700;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920') center/cover no-repeat;
+            padding: 180px 0 120px;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+        }
+        
+        .hero-section h1 {
+            font-size: 4.5rem;
+            color: var(--white);
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero-section p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        /* Menu Section */
+        .menu-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Category Filter Pills */
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .category-pill {
+            padding: 12px 28px;
+            border: 2px solid #e0e0e0;
+            background: var(--white);
+            color: var(--text-color);
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: inline-block;
+        }
+        
+        .category-pill:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .category-pill.active {
+            background: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+        
+        /* Filter Bar */
+        .filter-bar {
+            background: var(--light-color);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 50px;
+        }
+        
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: end;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 0.95rem;
+        }
+        
+        .filter-group input[type="text"],
+        .filter-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            background: var(--white);
+        }
+        
+        .filter-group input[type="text"]:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+        }
+        
+        .filter-toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .filter-toggle-group span {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 26px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        
+        .btn-filter {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            background: var(--primary-color);
+            color: var(--white);
+        }
+        
+        .btn-filter:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,107,53,0.3);
+        }
+        
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            align-items: center;
+        }
+        
+        .active-filters strong {
+            margin-right: 8px;
+            color: var(--dark-color);
+        }
+        
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            background: var(--primary-color);
+            color: var(--white);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Advanced Filters Styles */
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .dishes-found {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .advanced-filters-container {
+            margin-top: 20px;
+        }
+
+        .advanced-filters {
+            background: rgba(255, 107, 53, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .filter-checkbox {
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .btn-remove-filter {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 6px;
+            font-size: 1.2rem;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-remove-filter:hover {
+            opacity: 0.8;
+        }
+
+        /* Advanced Filters Smooth Animation */
+        .advanced-filters {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+            margin-top: 0;
+            padding-top: 0 !important;
+        }
+
+        .advanced-filters.show {
+            max-height: 1000px;
+            opacity: 1;
+            margin-top: 20px;
+            padding-top: 20px !important;
+        }
+
+        /* Loading spinner overlay */
+        .filter-loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            display: none;
+        }
+
+        .filter-loading.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Dish Cards - Vertical List */
+        .dish-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .dish-card {
+            background: var(--white);
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .dish-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .dish-content {
+            flex: 1;
+        }
+        
+        .dish-header {
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .dish-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin: 0;
+        }
+        
+        .dish-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .dish-description {
+            color: var(--text-color);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+        
+        .dish-sauce {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+        
+        .dish-sauce i {
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+        
+        .dish-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .preference-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .badge-chef {
+            background: #ffeaa7;
+            color: #d63031;
+        }
+        
+        .badge-vegetarian {
+            background: #cfe2ff;
+            color: #084298;
+        }
+        
+        .badge-vegan {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-spicy {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-kids {
+            background: #f0d6ff;
+            color: #6f42c1;
+        }
+        
+        .badge-dessert {
+            background: #ffd6e8;
+            color: #c2185b;
+        }
+        
+        .badge-beverage {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .availability-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .availability-icon.available {
+            color: var(--success);
+        }
+        
+        .availability-icon.unavailable {
+            color: #6c757d;
+        }
+        
+        .dish-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        
+        .btn-action {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        
+        .btn-edit {
+            background: #17a2b8;
+            color: var(--white);
+        }
+        
+        .btn-edit:hover {
+            background: #138496;
+            transform: scale(1.1);
+            color: var(--white);
+            text-decoration: none;
+        }
+        
+        .btn-delete {
+            background: var(--danger);
+            color: var(--white);
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+            transform: scale(1.1);
+            color: var(--white);
+            text-decoration: none;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        .empty-state h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+        
+        .empty-state p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+        
+        .btn-primary {
+            padding: 14px 35px;
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,107,53,0.3);
+            color: var(--white);
+            text-decoration: none;
+        }
+        
+        /* Floating Add Button */
+        .floating-add-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255,107,53,0.5);
+            transition: all 0.3s;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .floating-add-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 12px 35px rgba(255,107,53,0.6);
+            color: var(--white);
+            text-decoration: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-section {
+                padding: 120px 0 80px;
+            }
+            
+            .category-filters {
+                gap: 8px;
+            }
+            
+            .category-pill {
+                padding: 10px 20px;
+                font-size: 0.85rem;
+            }
+            
+            .filter-form {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+            
+            .dish-card {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .dish-header {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .dish-name {
+                font-size: 1.5rem;
+            }
+            
+            .floating-add-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+                bottom: 30px;
+                right: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1>Our Menu</h1>
+            <p>Explore our carefully curated selection of culinary delights, each crafted with passion and the finest ingredients</p>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu-section">
+        <div class="container">
+            <!-- Category Filter Pills -->
+            <div class="category-filters">
+                <a href="{% url 'menu:dish_list' %}" class="category-pill {% if not active_preference %}active{% endif %}">All</a>
+                {% for value, label in preferences %}
+                    <a href="{% url 'menu:dish_list' %}?preference={{ value }}" class="category-pill {% if value == active_preference %}active{% endif %}">
+                        {% if value == 'chef_special' %}⭐{% elif value == 'vegetarian' %}🌿{% elif value == 'vegan' %}🌱{% elif value == 'spicy' %}🌶️{% elif value == 'kids' %}👶{% elif value == 'dessert' %}🍰{% elif value == 'beverage' %}🥤{% endif %}
+                        {{ label }}
+                    </a>
+                {% endfor %}
+            </div>
+
+            <!-- Advanced Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-header">
+                    <h3 style="margin: 0; color: var(--dark-color);">
+                        <i class="fas fa-search"></i> Search & Filters
+                        <span class="dishes-found">{{ dishes_count }} results</span>
+                    </h3>
+                </div>
+
+                <form method="get" class="filter-form" id="filter-form">
+                    <!-- Search -->
+                    <div class="filter-group" style="flex: 2; min-width: 250px;">
+                        <label for="id_search">Search Dishes</label>
+                        {{ filter_form.search }}
+                    </div>
+
+                    <!-- Sorting -->
+                    <div class="filter-group">
+                        <label for="id_sort_by">Sort By</label>
+                        {{ filter_form.sort_by }}
+                    </div>
+
+                    <!-- Price Range (Preset) -->
+                    <div class="filter-group">
+                        <label for="id_price_range">Price Range</label>
+                        {{ filter_form.price_range }}
+                    </div>
+                </form>
+
+                <!-- Advanced Filters (Collapsible) -->
+                <div class="advanced-filters-container">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="toggle-advanced-filters" aria-controls="advanced-filters" aria-expanded="false" style="margin-top: 15px; width: 100%;">
+                        <i class="fas fa-chevron-down"></i> Refine Search
+                    </button>
+
+                    <div class="advanced-filters" id="advanced-filters" style="border-top: 2px solid #e0e0e0;">
+                        <form method="get" id="advanced-filter-form">
+                            <!-- Categories -->
+                            {% if categories %}
+                            <div class="filter-section">
+                                <h5 style="color: var(--dark-color); font-weight: 600; margin-bottom: 12px;">
+                                    <i class="fas fa-tags"></i> Categories
+                                </h5>
+                                <div class="filter-checkboxes">
+                                    {% for category in categories %}
+                                    <div class="form-check" style="margin-bottom: 10px;">
+                                        <input class="form-check-input filter-checkbox" type="checkbox" name="categories" value="{{ category.id }}" id="cat_{{ category.id }}" 
+                                            {% if category in filter_form.cleaned_data.categories %}checked{% endif %}>
+                                        <label class="form-check-label" for="cat_{{ category.id }}" style="margin-bottom: 0; color: var(--text-color);">
+                                            {{ category.icon }} {{ category.get_name_display }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Dietary Tags -->
+                            {% if dietary_tags %}
+                            <div class="filter-section">
+                                <h5 style="color: var(--dark-color); font-weight: 600; margin-bottom: 12px;">
+                                    <i class="fas fa-leaf"></i> Dietary Preferences
+                                </h5>
+                                <div class="filter-checkboxes">
+                                    {% for tag in dietary_tags %}
+                                    <div class="form-check" style="margin-bottom: 10px;">
+                                        <input class="form-check-input filter-checkbox" type="checkbox" name="dietary_tags" value="{{ tag.id }}" id="tag_{{ tag.id }}"
+                                            {% if tag in filter_form.cleaned_data.dietary_tags %}checked{% endif %}>
+                                        <label class="form-check-label" for="tag_{{ tag.id }}" style="margin-bottom: 0; color: var(--text-color);">
+                                            <span style="display: inline-block; width: 20px; height: 20px; border-radius: 4px; background-color: {{ tag.color }}; margin-right: 8px; vertical-align: middle;"></span>
+                                            {{ tag.icon }} {{ tag.get_name_display }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Prep Time -->
+                            <div class="filter-section">
+                                <h5 style="color: var(--dark-color); font-weight: 600; margin-bottom: 12px;">
+                                    <i class="fas fa-hourglass-half"></i> Prep Time
+                                </h5>
+                                <div class="form-check" style="margin-bottom: 10px;">
+                                    <input class="form-check-input" type="radio" name="prep_time" value="quick" id="prep_quick" {% if filter_form.cleaned_data.prep_time == 'quick' %}checked{% endif %}>
+                                    <label class="form-check-label" for="prep_quick">Quick (< 15 min)</label>
+                                </div>
+                                <div class="form-check" style="margin-bottom: 10px;">
+                                    <input class="form-check-input" type="radio" name="prep_time" value="moderate" id="prep_moderate" {% if filter_form.cleaned_data.prep_time == 'moderate' %}checked{% endif %}>
+                                    <label class="form-check-label" for="prep_moderate">Moderate (15-30 min)</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="prep_time" value="takes_time" id="prep_takes_time" {% if filter_form.cleaned_data.prep_time == 'takes_time' %}checked{% endif %}>
+                                    <label class="form-check-label" for="prep_takes_time">Takes Time (> 30 min)</label>
+                                </div>
+                            </div>
+
+                            <!-- Availability -->
+                            <div class="filter-section">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="only_available" id="only_available" {% if filter_form.cleaned_data.only_available %}checked{% endif %}>
+                                    <label class="form-check-label" for="only_available">Show only available dishes</label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Active Filters Display -->
+                {% if filters_applied %}
+                    <div class="active-filters" style="margin-top: 20px;">
+                        <strong style="display: block; margin-bottom: 12px;">Active Filters:</strong>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                            {% for filter_type, filter_value, filter_key in filters_applied %}
+                                <span class="filter-chip" data-filter-key="{{ filter_key }}">
+                                    {{ filter_value }}
+                                    <button type="button" class="btn-remove-filter" data-filter-key="{{ filter_key }}" style="background: none; border: none; color: white; cursor: pointer; margin-left: 8px; padding: 0; font-size: 1.1rem; line-height: 1;">
+                                        ×
+                                    </button>
+                                </span>
+                            {% endfor %}
+                            <a href="{% url 'menu:dish_list' %}" class="btn btn-sm btn-light" style="margin-left: 10px;">
+                                <i class="fas fa-times"></i> Clear All
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Dish List -->
+            {% if dishes %}
+                <div class="dish-list">
+                    {% for dish in dishes %}
+                        <div class="dish-card">
+                            <div class="dish-content">
+                                <div class="dish-header">
+                                    <h3 class="dish-name">{{ dish.name }}</h3>
+                                    <span class="dish-price">${{ dish.price }}</span>
+                                </div>
+                                
+                                <p class="dish-description">
+                                    {{ dish.description|default:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc mollis eleifend dapibus." }}
+                                </p>
+                                
+                                <div class="dish-sauce">
+                                    <i class="fas fa-utensils"></i>
+                                    <span>Preferred Sauce: {{ dish.preferred_sauce }}</span>
+                                </div>
+                                
+                                <div class="dish-meta">
+                                    <span class="preference-badge badge-{{ dish.preference }}">
+                                        {% if dish.preference == 'chef_special' %}
+                                            ⭐ Chef's Special
+                                        {% elif dish.preference == 'vegetarian' %}
+                                            🌿 Vegetarian
+                                        {% elif dish.preference == 'vegan' %}
+                                            🌱 Vegan
+                                        {% elif dish.preference == 'spicy' %}
+                                            🌶️ Spicy Lovers
+                                        {% elif dish.preference == 'kids' %}
+                                            👶 Kids' Favorite
+                                        {% elif dish.preference == 'dessert' %}
+                                            🍰 Dessert
+                                        {% elif dish.preference == 'beverage' %}
+                                            🥤 Beverage
+                                        {% else %}
+                                            {{ dish.get_preference_display }}
+                                        {% endif %}
+                                    </span>
+                                    
+                                    <span class="availability-icon {% if dish.is_available %}available{% else %}unavailable{% endif %}">
+                                        <i class="fas fa-{% if dish.is_available %}check-circle{% else %}times-circle{% endif %}"></i>
+                                        {{ dish.is_available|yesno:"Available,Unavailable" }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="dish-actions">
+                                <a href="{% url 'menu:dish_update' dish.pk %}" class="btn-action btn-edit" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'menu:dish_delete' dish.pk %}" class="btn-action btn-delete" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h2>No Dishes Found</h2>
+                    <p>Start by adding your signature creations so your guests can discover them.</p>
+                    <a href="{% url 'menu:dish_create' %}" class="btn-primary">
+                        <i class="fas fa-plus"></i> Add the First Dish
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Floating Add Button -->
+    <a href="{% url 'menu:dish_create' %}" class="floating-add-btn" title="Add New Dish">
+        <i class="fas fa-plus"></i>
+    </a>
+
+    <!-- JavaScript for Advanced Filters -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle Advanced Filters with smooth animation
+            const toggleBtn = document.getElementById('toggle-advanced-filters');
+            const advancedFilters = document.getElementById('advanced-filters');
+            
+                if (toggleBtn && advancedFilters) {
+                    toggleBtn.addEventListener('click', function() {
+                        const isOpen = advancedFilters.classList.toggle('show');
+                        toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                        if (isOpen) {
+                            toggleBtn.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Filters';
+                        } else {
+                            toggleBtn.innerHTML = '<i class="fas fa-chevron-down"></i> Refine Search';
+                        }
+                    });
+
+                    // Show advanced filters if any are selected
+                    const advancedCheckboxes = advancedFilters.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked');
+                    if (advancedCheckboxes.length > 0) {
+                        advancedFilters.classList.add('show');
+                        toggleBtn.setAttribute('aria-expanded', 'true');
+                        toggleBtn.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Filters';
+                    }
+                }
+
+            // Auto-submit on all filter changes (no manual button needed)
+            const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
+            filterCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateFormWithFilters();
+                });
+            });
+
+            // Handle prep time radio buttons - auto-submit on change
+            const prepTimeRadios = document.querySelectorAll('input[name="prep_time"]');
+            prepTimeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    updateFormWithFilters();
+                });
+            });
+
+            // Handle availability checkbox - auto-submit on change
+            const availCheckbox = document.querySelector('input[name="only_available"]');
+            if (availCheckbox) {
+                availCheckbox.addEventListener('change', function() {
+                    updateFormWithFilters();
+                });
+            }
+
+            // Function to update hidden form inputs and submit
+            function updateFormWithFilters() {
+                const form = document.getElementById('filter-form');
+                if (!form) return;
+
+                // Get all checked checkboxes
+                const selectedCategories = Array.from(
+                    document.querySelectorAll('input[name="categories"]:checked')
+                ).map(input => input.value);
+                
+                const selectedTags = Array.from(
+                    document.querySelectorAll('input[name="dietary_tags"]:checked')
+                ).map(input => input.value);
+
+                // Get selected prep time
+                const selectedPrepTime = document.querySelector('input[name="prep_time"]:checked');
+                const prepTimeValue = selectedPrepTime ? selectedPrepTime.value : '';
+
+                // Get availability
+                const onlyAvailable = document.querySelector('input[name="only_available"]:checked') ? 'on' : '';
+
+                // Build query params
+                let params = new URLSearchParams();
+                
+                // Add search
+                const searchInput = document.getElementById('id_search');
+                if (searchInput && searchInput.value) {
+                    params.append('search', searchInput.value);
+                }
+
+                // Add sort
+                const sortSelect = document.getElementById('id_sort_by');
+                if (sortSelect && sortSelect.value) {
+                    params.append('sort_by', sortSelect.value);
+                }
+
+                // Add price range
+                const priceSelect = document.getElementById('id_price_range');
+                if (priceSelect && priceSelect.value) {
+                    params.append('price_range', priceSelect.value);
+                }
+
+                // Add categories
+                selectedCategories.forEach(cat => {
+                    params.append('categories', cat);
+                });
+
+                // Add dietary tags
+                selectedTags.forEach(tag => {
+                    params.append('dietary_tags', tag);
+                });
+
+                // Add prep time
+                if (prepTimeValue) {
+                    params.append('prep_time', prepTimeValue);
+                }
+
+                // Add availability
+                if (onlyAvailable) {
+                    params.append('only_available', 'on');
+                }
+
+                // Navigate to new URL with all filters
+                const baseUrl = window.location.pathname;
+                window.location.href = baseUrl + '?' + params.toString();
+            }
+
+            // Handle sort change - auto-submit
+            const sortSelect = document.getElementById('id_sort_by');
+            if (sortSelect) {
+                sortSelect.addEventListener('change', function() {
+                    updateFormWithFilters();
+                });
+            }
+
+            // Handle price range change - auto-submit
+            const priceSelect = document.getElementById('id_price_range');
+            if (priceSelect) {
+                priceSelect.addEventListener('change', function() {
+                    updateFormWithFilters();
+                });
+            }
+
+            // Handle search with debounce (wait 500ms after user stops typing)
+            const searchInput = document.getElementById('id_search');
+            if (searchInput) {
+                let searchTimeout;
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(function() {
+                        updateFormWithFilters();
+                    }, 500);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

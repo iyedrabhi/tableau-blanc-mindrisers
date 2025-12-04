@@ -1,0 +1,610 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if dish %}Edit {{ dish.name }}{% else %}Add New Dish{% endif %} | Food Funday</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #ff6b35;
+            --accent-color: #f7931e;
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --text-light: #e0e0e0;
+            --text-muted: #888;
+            --border-color: #333;
+            --white: #ffffff;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-light);
+            background: var(--dark-bg);
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,107,53,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(247,147,30,0.1) 0%, transparent 50%),
+                var(--dark-bg);
+            z-index: 0;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--white);
+            font-weight: 700;
+        }
+        
+        .form-wrapper {
+            position: relative;
+            z-index: 1;
+            padding: 60px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(255,255,255,0.05),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .form-header {
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .form-header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--text-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .form-group {
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        .form-group:nth-child(6) { animation-delay: 0.6s; }
+        .form-group:nth-child(7) { animation-delay: 0.7s; }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-light);
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(255,107,53,0.1);
+            box-shadow: 
+                0 0 0 4px rgba(255,107,53,0.1),
+                0 8px 24px rgba(255,107,53,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 140px;
+        }
+        
+        .form-group select {
+            cursor: pointer;
+        }
+        
+        .form-group select option {
+            background: var(--card-bg);
+            color: var(--text-light);
+        }
+        
+        .form-group .error {
+            color: #ff4444;
+            font-size: 0.875rem;
+            margin-top: 8px;
+            display: block;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .form-group .help-text {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 8px;
+        }
+        
+        .availability-toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .availability-toggle-group label {
+            margin: 0;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1rem;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 65px;
+            height: 32px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 32px;
+            border: 2px solid var(--border-color);
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--white);
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(33px);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            animation: fadeInUp 1.2s ease-out;
+        }
+        
+        .btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255,107,53,0.5);
+            color: var(--white);
+            text-decoration: none;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--border-color);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--text-light);
+            color: var(--white);
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+        
+        /* Floating particles effect */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-100px) translateX(50px);
+                opacity: 0.6;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .form-wrapper {
+                padding: 30px 15px;
+            }
+            
+            .form-container {
+                padding: 30px 25px;
+            }
+            
+            .form-header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+    </div>
+    
+    <div class="form-wrapper">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>{% if dish %}Edit {{ dish.name }}{% else %}Add New Dish{% endif %}</h1>
+                <p>Describe the dish, choose its preference tag, and don't forget the sauce pairing guests should remember.</p>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Section: Basic Information -->
+                <h3 style="color: var(--white); margin-bottom: 12px;">Basic Information</h3>
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">Name</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        {% for error in form.name.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">Description</label>
+                    {{ form.description }}
+                    {% if form.description.help_text %}
+                        <span class="help-text">{{ form.description.help_text }}</span>
+                    {% endif %}
+                    {% if form.description.errors %}
+                        {% for error in form.description.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="row" style="gap:20px;">
+                    <div class="col" style="flex:1; min-width:200px;">
+                        <div class="form-group">
+                            <label for="{{ form.category.id_for_label }}">Category</label>
+                            {{ form.category }}
+                            <span class="help-text">Choose the menu category this dish belongs to.</span>
+                        </div>
+                    </div>
+                    <div class="col" style="flex:1; min-width:200px;">
+                        <div class="form-group">
+                            <label for="{{ form.cuisine_type.id_for_label }}">Cuisine Type</label>
+                            {{ form.cuisine_type }}
+                            <span class="help-text">Select the cuisine (e.g. Italian, Mexican).</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Pricing & Timing -->
+                <h3 style="color: var(--white); margin-bottom: 12px; margin-top: 18px;">Pricing & Timing</h3>
+                <div class="row" style="gap:20px;">
+                    <div class="col" style="flex:1; min-width:200px;">
+                        <div class="form-group">
+                            <label for="{{ form.price.id_for_label }}">Price</label>
+                            {{ form.price }}
+                            {% if form.price.errors %}
+                                {% for error in form.price.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col" style="flex:1; min-width:200px;">
+                        <div class="form-group">
+                            <label for="{{ form.prep_time.id_for_label }}">Prep Time (minutes)</label>
+                            {{ form.prep_time }}
+                            <span class="help-text">Approximate preparation time in minutes.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Dietary & Allergens -->
+                <h3 style="color: var(--white); margin-bottom: 12px; margin-top: 18px;">Dietary & Allergens</h3>
+                <div class="form-group">
+                    <label>Dietary Tags</label>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                        {% for checkbox in form.dietary_tags %}
+                            <div class="form-check" style="min-width: 150px; display:flex; align-items:center;">
+                                {{ checkbox }}
+                                <label class="form-check-label" style="margin-left:8px;">{{ checkbox.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <span class="help-text">Select dietary attributes applicable to this dish.</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Allergens</label>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                        {% for checkbox in form.allergens %}
+                            <div class="form-check" style="min-width: 150px; display:flex; align-items:center;">
+                                {{ checkbox }}
+                                <label class="form-check-label" style="margin-left:8px;">{{ checkbox.choice_label }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <span class="help-text">Mark allergens present in the dish so customers can avoid them.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.spice_level.id_for_label }}">Spice Level</label>
+                    {{ form.spice_level }}
+                    <span class="help-text">Select the expected spice intensity for this dish.</span>
+                </div>
+
+                <!-- Section: Pairing & Details -->
+                <h3 style="color: var(--white); margin-bottom: 12px; margin-top: 18px;">Pairing & Details</h3>
+                <div class="form-group">
+                    <label for="{{ form.preferred_sauce.id_for_label }}">Preferred Sauce</label>
+                    {{ form.preferred_sauce }}
+                    {% if form.preferred_sauce.help_text %}
+                        <span class="help-text">{{ form.preferred_sauce.help_text }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.ingredients.id_for_label }}">Ingredients</label>
+                    {{ form.ingredients }}
+                    <span class="help-text">Comma-separated list (used for search and allergen hints).</span>
+                </div>
+
+                <div class="row" style="gap:20px;">
+                    <div class="col" style="flex:1; min-width:200px;">
+                        <div class="form-group">
+                            <label for="{{ form.preference.id_for_label }}">Preference</label>
+                            {{ form.preference }}
+                        </div>
+                    </div>
+                    <div class="col" style="flex:1; min-width:200px;">
+                        <div class="form-group">
+                            <label for="{{ form.rating.id_for_label }}">Rating (0–5)</label>
+                            {{ form.rating }}
+                            <span class="help-text">Optional: set initial rating (can be auto-updated later).</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="availability-toggle-group">
+                        <label for="{{ form.is_available.id_for_label }}">Available</label>
+                        <label class="toggle-switch">
+                            {{ form.is_available }}
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    {% if form.is_available.errors %}
+                        {% for error in form.is_available.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'menu:dish_list' %}" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Dish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

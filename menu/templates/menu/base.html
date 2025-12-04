@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Menu Manager{% endblock %}</title>
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --accent: #f97316;
+            --bg: #fdf8f3;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --danger: #dc2626;
+            --success: #059669;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at top, #fff7ed 0%, #f5f5f5 45%, #edf2f7 100%);
+            color: var(--text);
+        }
+        .page {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 3.5rem;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            padding: 1.2rem 1.75rem;
+            border-radius: 1.5rem;
+            border: 1px solid rgba(13,148,136,0.2);
+            background: linear-gradient(120deg, rgba(13,148,136,0.15), rgba(249,115,22,0.15));
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin: 0;
+        }
+        nav {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .btn, button.btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 0.55rem 1.3rem;
+            border: 1px solid transparent;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 25px rgba(13,148,136,0.25);
+        }
+        .btn-outline {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(13,148,136,0.08);
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .card {
+            background: white;
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(30,41,59,0.12);
+            border: 1px solid var(--border);
+        }
+        .filters form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .filter-group.inline {
+            flex-direction: row;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .filter-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .form-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        .form-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .form-field label {
+            font-weight: 600;
+        }
+        .form-field-full {
+            grid-column: 1 / -1;
+        }
+        .error {
+            color: var(--danger);
+            font-size: 0.85rem;
+        }
+        .help {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.8rem;
+            border: 1px solid var(--border);
+            font-size: 1rem;
+            background: var(--bg);
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+        .dish-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+        .dish-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .dish-card h3 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+        .price-tag {
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(13,148,136,0.12);
+            color: var(--primary-dark);
+        }
+        .badge-accent {
+            background: rgba(249,115,22,0.15);
+            color: #c2410c;
+        }
+        .availability {
+            font-weight: 600;
+            color: var(--success);
+        }
+        .availability.unavailable {
+            color: var(--danger);
+        }
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .muted {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(15,118,110,0.12);
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .chip-outline {
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--muted);
+        }
+        .toggle {
+            position: relative;
+            width: 42px;
+            height: 22px;
+            display: inline-block;
+        }
+        .toggle input { display: none; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #d1d5db;
+            transition: .2s;
+            border-radius: 999px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div>
+                <p class="badge badge-accent">Kitchen control center</p>
+                <h1>Signature Menu Board</h1>
+                <p class="muted">Spotlight dishes, assign sauces, and filter the lineup without leaving this page.</p>
+            </div>
+            <nav>
+                <a class="btn btn-outline" href="{% url 'menu:dish_list' %}">Menu dashboard</a>
+                <a class="btn btn-primary" href="{% url 'menu:dish_create' %}">+ Add dish</a>
+            </nav>
+        </header>
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        <footer>Made with Django • Keep your guests inspired ✨</footer>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load static widget_tweaks %}
+
+{% block title %}{% if form.instance.id %}Edit{% else %}Add{% endif %} Dish{% endblock %}
+
+{% block content %}
+<div id="menu" class="menu-main pad-top-100 pad-bottom-100">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-2">
+                <div class="wow fadeIn" data-wow-duration="1s" data-wow-delay="0.1s">
+                    <h2 class="block-title text-center">
+                        {% if form.instance.id %}Edit: {{ form.instance.name }}{% else %}Add New Dish{% endif %}
+                    </h2>
+                    <p class="title-caption text-center">
+                        Fill in the details below to {% if form.instance.id %}update{% else %}create{% endif %} your dish
+                    </p>
+                </div>
+
+                <form method="post" style="background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" style="margin-bottom: 20px;">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Basic Info Row -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_name" style="font-weight: 600; margin-bottom: 8px;">{{ form.name.label }}</label>
+                                {{ form.name|add_class:"form-control" }}
+                                {% if form.name.errors %}
+                                    <div class="text-danger small" style="margin-top: 5px;">{{ form.name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_price" style="font-weight: 600; margin-bottom: 8px;">{{ form.price.label }}</label>
+                                {{ form.price|add_class:"form-control" }}
+                                {% if form.price.errors %}
+                                    <div class="text-danger small" style="margin-top: 5px;">{{ form.price.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="id_description" style="font-weight: 600; margin-bottom: 8px;">{{ form.description.label }}</label>
+                        {{ form.description|add_class:"form-control" }}
+                        {% if form.description.errors %}
+                            <div class="text-danger small" style="margin-top: 5px;">{{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Category & Cuisine Type -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_category" style="font-weight: 600; margin-bottom: 8px;">{{ form.category.label }}</label>
+                                {{ form.category|add_class:"form-control" }}
+                                {% if form.category.errors %}
+                                    <div class="text-danger small" style="margin-top: 5px;">{{ form.category.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_cuisine_type" style="font-weight: 600; margin-bottom: 8px;">{{ form.cuisine_type.label }}</label>
+                                {{ form.cuisine_type|add_class:"form-control" }}
+                                {% if form.cuisine_type.errors %}
+                                    <div class="text-danger small" style="margin-top: 5px;">{{ form.cuisine_type.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preference & Spice Level -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_preference" style="font-weight: 600; margin-bottom: 8px;">{{ form.preference.label }}</label>
+                                {{ form.preference|add_class:"form-control" }}
+                                {% if form.preference.errors %}
+                                    <div class="text-danger small" style="margin-top: 5px;">{{ form.preference.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_spice_level" style="font-weight: 600; margin-bottom: 8px;">{{ form.spice_level.label }}</label>
+                                {{ form.spice_level|add_class:"form-control" }}
+                                {% if form.spice_level.errors %}
+                                    <div class="text-danger small" style="margin-top: 5px;">{{ form.spice_level.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prep Time & Rating -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_prep_time" style="font-weight: 600; margin-bottom: 8px;">{{ form.prep_time.label }}</label>
+                                {{ form.prep_time|add_class:"form-control" }}
+                                {% if form.prep_time.errors %}
+                                    <div class="text-danger small" style="margin-top: 5px;">{{ form.prep_time.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_is_available" style="font-weight: 600; margin-bottom: 8px;">{{ form.is_available.label }}</label>
+                                <div style="margin-top: 10px;">
+                                    {{ form.is_available }}
+                                </div>
+                                {% if form.is_available.errors %}
+                                    <div class="text-danger small" style="margin-top: 5px;">{{ form.is_available.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dietary Tags -->
+                    {% if form.dietary_tags %}
+                        <div class="form-group">
+                            <label style="font-weight: 600; margin-bottom: 12px; display: block;">{{ form.dietary_tags.label }}</label>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;">
+                                {% for choice in form.dietary_tags.field.queryset %}
+                                    <div style="display: flex; align-items: center;">
+                                        <input type="checkbox" name="dietary_tags" value="{{ choice.id }}" id="id_dietary_tags_{{ choice.id }}"
+                                            {% if choice in form.dietary_tags.value %}checked{% endif %} style="margin-right: 8px;">
+                                        <label for="id_dietary_tags_{{ choice.id }}" style="margin: 0; cursor: pointer;">{{ choice.get_name_display }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Allergens -->
+                    {% if form.allergens %}
+                        <div class="form-group">
+                            <label style="font-weight: 600; margin-bottom: 12px; display: block;">{{ form.allergens.label }}</label>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px;">
+                                {% for choice in form.allergens.field.queryset %}
+                                    <div style="display: flex; align-items: center;">
+                                        <input type="checkbox" name="allergens" value="{{ choice.id }}" id="id_allergens_{{ choice.id }}"
+                                            {% if choice in form.allergens.value %}checked{% endif %} style="margin-right: 8px;">
+                                        <label for="id_allergens_{{ choice.id }}" style="margin: 0; cursor: pointer;">{{ choice.get_name_display }}</label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Other Fields -->
+                    <div class="form-group">
+                        <label for="id_preferred_sauce" style="font-weight: 600; margin-bottom: 8px;">{{ form.preferred_sauce.label }}</label>
+                        {{ form.preferred_sauce|add_class:"form-control" }}
+                        {% if form.preferred_sauce.errors %}
+                            <div class="text-danger small" style="margin-top: 5px;">{{ form.preferred_sauce.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_ingredients" style="font-weight: 600; margin-bottom: 8px;">{{ form.ingredients.label }}</label>
+                        {{ form.ingredients|add_class:"form-control" }}
+                        {% if form.ingredients.errors %}
+                            <div class="text-danger small" style="margin-top: 5px;">{{ form.ingredients.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 40px;">
+                        <button type="submit" class="btn btn-primary hvr-underline-from-center" style="min-width: 150px;">
+                            {% if form.instance.id %}Update Dish{% else %}Create Dish{% endif %}
+                        </button>
+                        <a href="{% url 'menu:dish_list' %}" class="btn btn-default hvr-underline-from-center" style="min-width: 150px;">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
