@@ -17,6 +17,27 @@ def api_dishes_count(request):
     return JsonResponse({'count': count})
 
 
+@csrf_exempt
+def api_dishes_by_category(request):
+    """Return all available dishes organized by category"""
+    categories = Category.objects.prefetch_related('dishes').all().order_by('display_order')
+    
+    data = []
+    for category in categories:
+        available_dishes = category.dishes.filter(is_available=True).values(
+            'id', 'name', 'description', 'price', 'rating', 'category__name', 'category__icon'
+        )
+        
+        if available_dishes.exists():
+            data.append({
+                'category_name': category.get_name_display(),
+                'category_icon': category.icon,
+                'dishes': list(available_dishes)
+            })
+    
+    return JsonResponse({'categories': data})
+
+
 def dish_list(request):
     """List dishes with advanced Phase 1 filtering and sorting."""
 

@@ -10,7 +10,8 @@ urlpatterns = [
     path("add/", views.dish_create, name="dish_create"),
     path("<int:pk>/edit/", views.dish_update, name="dish_update"),
     path("<int:pk>/delete/", views.dish_delete, name="dish_delete"),
-    # API endpoint for integration with iyed
+    # API endpoints for integration with iyed
     path("api/dishes/count/", views.api_dishes_count, name="api_dishes_count"),
+    path("api/dishes/by-category/", views.api_dishes_by_category, name="api_dishes_by_category"),
 ]
 
