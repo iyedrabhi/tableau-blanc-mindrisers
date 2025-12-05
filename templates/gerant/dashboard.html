@@ -75,6 +75,26 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Menu Management Statistics -->
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top: 20px;">
+                    <div class="statistics-box" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); padding: 50px; border-radius: 15px; box-shadow: 0 10px 30px rgba(255,107,53,0.3); text-align: center; margin-bottom: 30px; transition: all 0.3s ease;">
+                        <div class="statistics-icon" style="font-size: 60px; color: white; margin-bottom: 25px;">
+                            <i class="fa fa-cutlery" aria-hidden="true"></i>
+                        </div>
+                        <div class="statistics-content">
+                            <h3 style="color: white; margin-bottom: 25px; font-size: 2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">Menu Management</h3>
+                            <div class="statistics-number" style="margin: 25px 0;">
+                                <span class="counter" style="font-size: 56px; font-weight: bold; color: white; display: block; text-shadow: 0 3px 6px rgba(0,0,0,0.2);">{{ dishes_count|default:0 }}</span>
+                                <span class="statistics-label" style="font-size: 18px; color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 2px;">Total Dishes</span>
+                            </div>
+                            <p class="statistics-desc" style="color: rgba(255,255,255,0.95); margin-bottom: 30px; font-size: 1.1rem;">Manage your restaurant menu, add new dishes, update prices and availability</p>
+                            <a href="http://127.0.0.1:8000/" class="statistics-btn" style="display: inline-block; color: white; background: rgba(255,255,255,0.2); text-decoration: none; font-weight: bold; padding: 15px 40px; border: 2px solid white; border-radius: 30px; transition: all 0.3s ease; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                                Manage Menu <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -113,6 +133,36 @@
                             <p style="color: #ccc; margin-bottom: 25px; font-size: 1rem;">Add a new delivery person to your team</p>
                             <a href="{% url 'livreur_create' %}" class="action-btn" style="display: inline-block; color: #e67e22; text-decoration: none; font-weight: bold; padding: 12px 30px; border: 2px solid #e67e22; border-radius: 25px; transition: all 0.3s ease; font-size: 1rem;">
                                 Add Livreur <i class="fa fa-plus" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="quick-action-item" style="background: rgba(255,107,53,0.2); padding: 40px; border-radius: 15px; margin-bottom: 30px; text-align: center; border: 2px solid rgba(255,107,53,0.5); transition: all 0.3s ease; backdrop-filter: blur(10px);">
+                        <div class="action-icon" style="font-size: 42px; color: #ff6b35; margin-bottom: 20px;">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 style="color: white; margin-bottom: 15px; font-size: 1.4rem;">Add New Dish</h3>
+                            <p style="color: #ccc; margin-bottom: 25px; font-size: 1rem;">Create a new dish and add it to your menu</p>
+                            <a href="http://127.0.0.1:8000/add/" class="action-btn" style="display: inline-block; color: #ff6b35; background: rgba(255,255,255,0.9); text-decoration: none; font-weight: bold; padding: 12px 30px; border: 2px solid #ff6b35; border-radius: 25px; transition: all 0.3s ease; font-size: 1rem;">
+                                Create Dish <i class="fa fa-plus" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="quick-action-item" style="background: rgba(255,255,255,0.1); padding: 40px; border-radius: 15px; margin-bottom: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease; backdrop-filter: blur(10px);">
+                        <div class="action-icon" style="font-size: 42px; color: #e67e22; margin-bottom: 20px;">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3 style="color: white; margin-bottom: 15px; font-size: 1.4rem;">Browse Menu</h3>
+                            <p style="color: #ccc; margin-bottom: 25px; font-size: 1rem;">View all dishes with advanced filtering and search</p>
+                            <a href="http://127.0.0.1:8000/" class="action-btn" style="display: inline-block; color: #e67e22; text-decoration: none; font-weight: bold; padding: 12px 30px; border: 2px solid #e67e22; border-radius: 25px; transition: all 0.3s ease; font-size: 1rem;">
+                                View Menu <i class="fa fa-arrow-right" aria-hidden="true"></i>
                             </a>
                         </div>
                     </div>

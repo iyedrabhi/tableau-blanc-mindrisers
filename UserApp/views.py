@@ -82,9 +82,21 @@ def gerant_dashboard(request):
 	clients_count = User.objects.filter(role='client', is_deleted=False).count()
 	livreurs_count = User.objects.filter(role='livreur', is_deleted=False).count()
 	
+	# Get dish count from islem's menu (if running on port 8000)
+	dishes_count = 0
+	try:
+		import requests
+		response = requests.get('http://127.0.0.1:8000/api/dishes/count/', timeout=2)
+		if response.status_code == 200:
+			dishes_count = response.json().get('count', 0)
+	except:
+		# If islem server is not running or API doesn't exist, set to 0
+		dishes_count = 0
+	
 	context = {
 		'clients_count': clients_count,
 		'livreurs_count': livreurs_count,
+		'dishes_count': dishes_count,
 	}
 	return render(request, 'gerant/dashboard.html', context)
 
