@@ -708,20 +708,35 @@
                 <form method="get" class="filter-form" id="filter-form">
                     <!-- Search -->
                     <div class="filter-group" style="flex: 2; min-width: 250px;">
-                        <label for="id_search">Search Dishes</label>
-                        {{ filter_form.search }}
+                        <label for="id_search"><i class="fas fa-search"></i> Search Dishes</label>
+                        <input type="text" name="search" placeholder="Search dishes..." class="form-control" id="id_search" value="{{ request.GET.search|default:'' }}">
                     </div>
 
                     <!-- Sorting -->
                     <div class="filter-group">
-                        <label for="id_sort_by">Sort By</label>
-                        {{ filter_form.sort_by }}
+                        <label for="id_sort_by"><i class="fas fa-arrow-down-up"></i> Sort By</label>
+                        <select name="sort_by" class="form-control" id="id_sort_by">
+                            <option value="">Sort by...</option>
+                            <option value="name_asc" {% if request.GET.sort_by == 'name_asc' %}selected{% endif %}>Name (A→Z)</option>
+                            <option value="name_desc" {% if request.GET.sort_by == 'name_desc' %}selected{% endif %}>Name (Z→A)</option>
+                            <option value="price_asc" {% if request.GET.sort_by == 'price_asc' %}selected{% endif %}>Price (Low→High)</option>
+                            <option value="price_desc" {% if request.GET.sort_by == 'price_desc' %}selected{% endif %}>Price (High→Low)</option>
+                            <option value="prep_time_asc" {% if request.GET.sort_by == 'prep_time_asc' %}selected{% endif %}>Prep Time (Fastest)</option>
+                            <option value="newest" {% if request.GET.sort_by == 'newest' %}selected{% endif %}>Newest First</option>
+                            <option value="popularity" {% if request.GET.sort_by == 'popularity' %}selected{% endif %}>Most Popular</option>
+                            <option value="rating_desc" {% if request.GET.sort_by == 'rating_desc' %}selected{% endif %}>Highest Rating</option>
+                        </select>
                     </div>
 
                     <!-- Price Range (Preset) -->
                     <div class="filter-group">
-                        <label for="id_price_range">Price Range</label>
-                        {{ filter_form.price_range }}
+                        <label for="id_price_range"><i class="fas fa-dollar-sign"></i> Price Range</label>
+                        <select name="price_range" class="form-control" id="id_price_range">
+                            <option value="">All Prices</option>
+                            <option value="budget" {% if request.GET.price_range == 'budget' %}selected{% endif %}>Budget (< $10)</option>
+                            <option value="mid" {% if request.GET.price_range == 'mid' %}selected{% endif %}>Mid-Range ($10-25)</option>
+                            <option value="premium" {% if request.GET.price_range == 'premium' %}selected{% endif %}>Premium (> $25)</option>
+                        </select>
                     </div>
                 </form>
 

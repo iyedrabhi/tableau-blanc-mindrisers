@@ -1,9 +1,191 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Menu - Restaurant{% endblock %}
+{% block title %}Menu{% endblock %}
 
 {% block content %}
+<style>
+    /* Cool hover animations for dish cards */
+    .offer-item {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+    }
+    
+    .offer-item::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,107,53,0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: all 0.6s ease;
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    .offer-item:hover::before {
+        opacity: 1;
+        top: -25%;
+        left: -25%;
+    }
+    
+    .offer-item:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 20px 50px rgba(255, 107, 53, 0.25), 0 10px 30px rgba(0,0,0,0.15);
+        border-radius: 16px;
+    }
+    
+    .offer-item img {
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .offer-item:hover img {
+        transform: scale(1.08);
+        filter: brightness(1.1) contrast(1.05);
+    }
+    
+    .offer-item h3 {
+        transition: all 0.3s ease;
+    }
+    
+    .offer-item:hover h3 {
+        color: #ff6b35 !important;
+        transform: translateX(5px);
+    }
+    
+    .offer-price {
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+    
+    .offer-item:hover .offer-price {
+        transform: scale(1.12);
+        text-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+    }
+    
+    /* Badge pulse animation */
+    .badge {
+        transition: all 0.3s ease;
+        animation: subtle-pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes subtle-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    .offer-item:hover .badge {
+        animation: none;
+        transform: scale(1.08);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+    
+    /* Button hover animations */
+    .btn {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.5s, height 0.5s;
+    }
+    
+    .btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    
+    .btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    
+    /* Category icon animation */
+    .offer-item [style*="ff6b35"] {
+        transition: all 0.3s ease;
+    }
+    
+    .offer-item:hover [style*="ff6b35"] {
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    }
+    
+    /* Staggered animation on load */
+    .offer-item {
+        animation: fadeInUp 0.6s ease-out backwards;
+    }
+    
+    .col-lg-6:nth-child(1) .offer-item { animation-delay: 0.1s; }
+    .col-lg-6:nth-child(2) .offer-item { animation-delay: 0.2s; }
+    .col-lg-6:nth-child(3) .offer-item { animation-delay: 0.3s; }
+    .col-lg-6:nth-child(4) .offer-item { animation-delay: 0.4s; }
+    .col-lg-6:nth-child(5) .offer-item { animation-delay: 0.5s; }
+    .col-lg-6:nth-child(6) .offer-item { animation-delay: 0.6s; }
+    .col-lg-6:nth-child(n+7) .offer-item { animation-delay: 0.7s; }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Filter section animations */
+    .filter-bar input, .filter-bar select {
+        transition: all 0.3s ease;
+    }
+    
+    .filter-bar input:focus, .filter-bar select:focus {
+        transform: scale(1.02);
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.2);
+    }
+    
+    /* Active filter badges with animation */
+    [style*="background: #ff6b35"] {
+        animation: slideInRight 0.4s ease-out;
+    }
+    
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    /* Dietary tag hover */
+    .offer-item .badge:hover {
+        transform: scale(1.15) rotate(2deg);
+        cursor: default;
+    }
+</style>
 <div id="menu" class="menu-main pad-top-100 pad-bottom-100">
     <div class="container">
         <div class="row">
@@ -26,7 +208,162 @@
             </div>
         </div>
 
-        <!-- Menu Items Grid - 2 Columns Layout (like iyed) -->
+        <!-- Filter Bar -->
+        <div class="row" style="margin-bottom: 40px;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; border: 1px solid #e0e0e0;">
+                    <h4 style="margin: 0 0 20px 0; color: #2c2c2c; font-weight: 600;">
+                        <i class="fa fa-search"></i> Search & Filter
+                    </h4>
+                    
+                    <form method="get" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 15px;">
+                        <!-- Search -->
+                        <div style="flex: 1; min-width: 200px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c2c2c; font-size: 0.95rem;">
+                                Search Dishes
+                            </label>
+                            <input type="text" name="search" placeholder="Search by name or description..." style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.95rem; font-family: Poppins, sans-serif;" value="{{ request.GET.search|default:'' }}">
+                        </div>
+
+                        <!-- Sort By -->
+                        <div style="flex: 1; min-width: 200px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c2c2c; font-size: 0.95rem;">
+                                Sort By
+                            </label>
+                            <select name="sort_by" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.95rem; font-family: Poppins, sans-serif;">
+                                <option value="">Default</option>
+                                <option value="name_asc" {% if request.GET.sort_by == 'name_asc' %}selected{% endif %}>Name (A→Z)</option>
+                                <option value="name_desc" {% if request.GET.sort_by == 'name_desc' %}selected{% endif %}>Name (Z→A)</option>
+                                <option value="price_asc" {% if request.GET.sort_by == 'price_asc' %}selected{% endif %}>Price (Low→High)</option>
+                                <option value="price_desc" {% if request.GET.sort_by == 'price_desc' %}selected{% endif %}>Price (High→Low)</option>
+                                <option value="prep_time_asc" {% if request.GET.sort_by == 'prep_time_asc' %}selected{% endif %}>Prep Time</option>
+                                <option value="rating_desc" {% if request.GET.sort_by == 'rating_desc' %}selected{% endif %}>Highest Rating</option>
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div style="flex: 1; min-width: 200px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2c2c2c; font-size: 0.95rem;">
+                                Price Range
+                            </label>
+                            <select name="price_range" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.95rem; font-family: Poppins, sans-serif;">
+                                <option value="">All Prices</option>
+                                <option value="budget" {% if request.GET.price_range == 'budget' %}selected{% endif %}>Budget (< $10)</option>
+                                <option value="mid" {% if request.GET.price_range == 'mid' %}selected{% endif %}>Mid-Range ($10-25)</option>
+                                <option value="premium" {% if request.GET.price_range == 'premium' %}selected{% endif %}>Premium (> $25)</option>
+                            </select>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" style="background: #ff6b35; color: white; border: none; padding: 10px 24px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.95rem; font-family: Poppins, sans-serif;">
+                            <i class="fa fa-filter"></i> Filter
+                        </button>
+                    </form>
+
+                    <!-- Advanced Filters Section -->
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">
+                        <h5 style="margin: 0 0 15px 0; color: #2c2c2c; font-weight: 600;">Advanced Filters</h5>
+                        
+                        <form method="get" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;" id="advanced-filter-form">
+                            <!-- Hidden fields to preserve other filters -->
+                            <input type="hidden" name="search" value="{{ request.GET.search|default:'' }}">
+                            <input type="hidden" name="sort_by" value="{{ request.GET.sort_by|default:'' }}">
+                            <input type="hidden" name="price_range" value="{{ request.GET.price_range|default:'' }}">
+
+                            <!-- Categories -->
+                            <div>
+                                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #2c2c2c; font-size: 0.95rem;">
+                                    <i class="fa fa-tags"></i> Categories
+                                </label>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    {% for category in categories %}
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 400; font-size: 0.9rem;">
+                                            <input type="checkbox" name="categories" value="{{ category.id }}" {% if category.id|stringformat:"s" in selected_categories %}checked{% endif %} style="cursor: pointer; width: 18px; height: 18px;">
+                                            <span style="font-size: 1.1rem;">{{ category.icon }}</span>
+                                            {{ category.get_name_display }}
+                                        </label>
+                                    {% empty %}
+                                        <p style="color: #999; font-size: 0.9rem;">No categories available</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Dietary Tags -->
+                            <div>
+                                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #2c2c2c; font-size: 0.95rem;">
+                                    <i class="fa fa-leaf"></i> Dietary Tags
+                                </label>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    {% for tag in dietary_tags %}
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 400; font-size: 0.9rem;">
+                                            <input type="checkbox" name="dietary_tags" value="{{ tag.id }}" {% if tag.id|stringformat:"s" in selected_dietary_tags %}checked{% endif %} style="cursor: pointer; width: 18px; height: 18px;">
+                                            <span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background-color: {{ tag.color }};"></span>
+                                            {{ tag.get_name_display }}
+                                        </label>
+                                    {% empty %}
+                                        <p style="color: #999; font-size: 0.9rem;">No dietary tags available</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Allergens -->
+                            <div>
+                                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #2c2c2c; font-size: 0.95rem;">
+                                    <i class="fa fa-exclamation-triangle"></i> Allergens
+                                </label>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    {% for allergen in allergens %}
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 400; font-size: 0.9rem;">
+                                            <input type="checkbox" name="allergens" value="{{ allergen.id }}" {% if allergen.id|stringformat:"s" in selected_allergens %}checked{% endif %} style="cursor: pointer; width: 18px; height: 18px;">
+                                            {{ allergen.get_name_display }}
+                                        </label>
+                                    {% empty %}
+                                        <p style="color: #999; font-size: 0.9rem;">No allergens available</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Apply Advanced Filters Button -->
+                        <div style="margin-top: 15px;">
+                            <button type="submit" form="advanced-filter-form" style="background: #ff6b35; color: white; border: none; padding: 10px 24px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.95rem; font-family: Poppins, sans-serif;">
+                                <i class="fa fa-check"></i> Apply Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Active Filters Display -->
+                    {% if request.GET.search or request.GET.sort_by or request.GET.price_range %}
+                    <div style="padding-top: 15px; border-top: 1px solid #ddd;">
+                        <strong style="color: #2c2c2c; font-size: 0.9rem;">Active Filters:</strong>
+                        <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;">
+                            {% if request.GET.search %}
+                                <span style="background: #ff6b35; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                    Search: {{ request.GET.search }}
+                                    <a href="?sort_by={{ request.GET.sort_by }}&price_range={{ request.GET.price_range }}" style="color: white; text-decoration: none; font-weight: bold;">×</a>
+                                </span>
+                            {% endif %}
+                            {% if request.GET.sort_by %}
+                                <span style="background: #ff6b35; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                    Sort: {{ request.GET.sort_by|title }}
+                                    <a href="?search={{ request.GET.search }}&price_range={{ request.GET.price_range }}" style="color: white; text-decoration: none; font-weight: bold;">×</a>
+                                </span>
+                            {% endif %}
+                            {% if request.GET.price_range %}
+                                <span style="background: #ff6b35; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                    Price: {{ request.GET.price_range|title }}
+                                    <a href="?search={{ request.GET.search }}&sort_by={{ request.GET.sort_by }}" style="color: white; text-decoration: none; font-weight: bold;">×</a>
+                                </span>
+                            {% endif %}
+                            <a href="{% url 'menu:dish_list' %}" style="background: #ccc; color: #333; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; text-decoration: none; font-weight: 600;">
+                                Clear All
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         <div class="row">
             {% for dish in dishes %}
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -54,6 +391,15 @@
                                 </div>
                             {% endif %}
 
+                            {% if dish.category %}
+                                <div style="margin: 8px 0;">
+                                    <span style="display: inline-flex; align-items: center; gap: 6px; color: #ff6b35; font-size: 1.1rem; font-weight: 600; background: rgba(255, 107, 53, 0.1); padding: 6px 12px; border-radius: 20px;">
+                                        {{ dish.category.icon }}
+                                        {{ dish.category.get_name_display }}
+                                    </span>
+                                </div>
+                            {% endif %}
+
                             {% if dish.dietary_tags.all %}
                                 <div style="margin: 8px 0;">
                                     {% for tag in dish.dietary_tags.all %}
@@ -68,11 +414,11 @@
                                 <span class="offer-price" style="font-size: 1.4rem; font-weight: 700; color: #ff6b35;">
                                     ${{ dish.price }}
                                 </span>
-                                <div style="display: flex; gap: 8px;">
-                                    <a href="{% url 'menu:dish_update' dish.id %}" class="btn btn-sm btn-default" style="padding: 6px 12px; font-size: 0.85rem; border: 1px solid #ddd;">
+                                <div style="display: flex; gap: 12px;">
+                                    <a href="{% url 'menu:dish_update' dish.id %}" class="btn btn-default" style="padding: 14px 28px; font-size: 1rem; border: 2px solid #ddd; border-radius: 8px; font-weight: 700; white-space: nowrap; min-width: 100px; text-align: center;">
                                         Edit
                                     </a>
-                                    <a href="{% url 'menu:dish_delete' dish.id %}" class="btn btn-sm btn-danger" style="padding: 6px 12px; font-size: 0.85rem;">
+                                    <a href="{% url 'menu:dish_delete' dish.id %}" class="btn btn-danger" style="padding: 14px 28px; font-size: 1rem; border-radius: 8px; font-weight: 700; white-space: nowrap; min-width: 100px; text-align: center;">
                                         Delete
                                     </a>
                                 </div>

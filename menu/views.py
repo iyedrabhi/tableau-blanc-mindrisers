@@ -3,22 +3,43 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Value
 from django.db.models.functions import Lower
+from django.views.decorators.csrf import csrf_exempt
 
 from .forms import DishForm, DishFilterForm
-from .models import Dish, Category, DietaryTag
+from .models import Dish, Category, DietaryTag, Allergen
+
+
+# API endpoint for dish count (for iyed integration)
+@csrf_exempt
+def api_dishes_count(request):
+    """Return count of all dishes"""
+    count = Dish.objects.count()
+    return JsonResponse({'count': count})
 
 
 def dish_list(request):
     """List dishes with advanced Phase 1 filtering and sorting."""
 
-    # Initialize form with GET parameters
-    filter_form = DishFilterForm(request.GET)
+    # Initialize form with GET parameters (allow empty form for display)
+    filter_form = DishFilterForm(request.GET or None)
     
     # Start with all dishes
     dishes = Dish.objects.prefetch_related('dietary_tags', 'category')
     
-    # Apply filters from form
-    if filter_form.is_valid():
+    # Initialize filter variables
+    search_query = ''
+    price_range = None
+    min_price = None
+    max_price = None
+    categories = None
+    dietary_tags = None
+    allergens = None
+    prep_time = None
+    only_available = False
+    sort_by = None
+    
+    # Apply filters from form - only if form is valid AND has data
+    if request.GET and filter_form.is_valid():
         # Search filter
         search_query = filter_form.cleaned_data.get('search', '').strip()
         if search_query:
@@ -46,16 +67,25 @@ def dish_list(request):
             if max_price is not None:
                 dishes = dishes.filter(price__lte=max_price)
         
-        # Category filter
-        categories = filter_form.cleaned_data.get('categories')
-        if categories:
+        # Category filter - get from GET params
+        category_ids = request.GET.getlist('categories')
+        if category_ids:
+            categories = Category.objects.filter(id__in=category_ids)
             dishes = dishes.filter(category__in=categories)
         
-        # Dietary tags filter
-        dietary_tags = filter_form.cleaned_data.get('dietary_tags')
-        if dietary_tags:
+        # Dietary tags filter - get from GET params
+        dietary_tag_ids = request.GET.getlist('dietary_tags')
+        if dietary_tag_ids:
+            dietary_tags = DietaryTag.objects.filter(id__in=dietary_tag_ids)
             for tag in dietary_tags:
                 dishes = dishes.filter(dietary_tags=tag)
+        
+        # Allergens filter - get from GET params since form may not include it
+        allergen_ids = request.GET.getlist('allergens')
+        if allergen_ids:
+            allergens = Allergen.objects.filter(id__in=allergen_ids)
+            for allergen in allergens:
+                dishes = dishes.filter(allergens=allergen)
         
         # Prep time filter
         prep_time = filter_form.cleaned_data.get('prep_time')
@@ -128,6 +158,10 @@ def dish_list(request):
         'filters_applied': filters_applied,
         'categories': Category.objects.all(),
         'dietary_tags': DietaryTag.objects.all(),
+        'allergens': Allergen.objects.all(),
+        'selected_categories': request.GET.getlist('categories'),
+        'selected_dietary_tags': request.GET.getlist('dietary_tags'),
+        'selected_allergens': request.GET.getlist('allergens'),
     }
     
     return render(request, 'menu/dish_list.html', context)
@@ -155,24 +189,19 @@ def dish_create(request):
 
 def dish_update(request, pk):
     dish = get_object_or_404(Dish, pk=pk)
-    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
     
     if request.method == "POST":
         form = DishForm(request.POST, instance=dish)
         if form.is_valid():
             form.save()
-            if is_ajax:
-                return JsonResponse({"success": True, "redirect": True})
             return redirect("menu:dish_list")
         else:
-            # Form has errors
-            if is_ajax:
-                return render(
-                    request,
-                    "menu/dish_form.html",
-                    {"form": form, "title": f"Edit {dish.name}", "dish": dish},
-                    status=400
-                )
+            # Form has errors, show the form again
+            return render(
+                request,
+                "menu/dish_form.html",
+                {"form": form, "title": f"Edit {dish.name}", "dish": dish}
+            )
     else:
         form = DishForm(instance=dish)
     
