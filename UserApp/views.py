@@ -62,13 +62,45 @@ def logout_view(req):
 
 
 def client_home(request):
-    return render(request, 'client_home.html')
+    """Client home page with restaurant menu integrated from islem"""
+    # Fetch dishes by category from islem's API
+    dishes_by_category = []
+    try:
+        import requests
+        response = requests.get('http://127.0.0.1:8000/api/dishes/by-category/', timeout=2)
+        if response.status_code == 200:
+            dishes_by_category = response.json().get('categories', [])
+    except:
+        # If islem server is not running or API doesn't exist, show empty
+        dishes_by_category = []
+    
+    context = {
+        'dishes_by_category': dishes_by_category,
+    }
+    return render(request, 'client_home.html', context)
 
 def livreur_home(request):
     return render(request, 'livreur_home.html')
 
 def home(request):
-	return render(request, 'home.html')
+	"""Home page with restaurant menu integrated from islem"""
+	# Fetch dishes by category from islem's API
+	dishes_by_category = []
+	try:
+		import requests
+		response = requests.get('http://127.0.0.1:8000/api/dishes/by-category/', timeout=2)
+		if response.status_code == 200:
+			dishes_by_category = response.json().get('categories', [])
+	except:
+		# If islem server is not running or API doesn't exist, show empty
+		dishes_by_category = []
+	
+	context = {
+		'dishes_by_category': dishes_by_category,
+		'is_authenticated': request.user.is_authenticated,
+		'user_role': request.user.role if request.user.is_authenticated else None,
+	}
+	return render(request, 'home.html', context)
 
 
 # Gerant Dashboard Views
