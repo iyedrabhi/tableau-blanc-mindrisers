@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Inventaire — TasteIt{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">📦 Gestion des Stocks</h2>
+    <div>
+        {% if request.user.userprofile.role == "manager" %}
+            <a href="{% url 'stock_create' %}" class="btn btn-success btn-sm btn-pill">➕ Ajouter un produit</a>
+            <a href="{% url 'create_order' %}" class="btn btn-outline-success btn-sm btn-pill ms-2">🛒 Passer une commande</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if expired_items %}
+  <div class="alert alert-danger">
+    ⚠️ <strong>Produits périmés :</strong>
+    {% for item in expired_items %}
+      <span class="badge bg-light text-danger ms-1">{{ item.name }}</span>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if expiring_soon_items %}
+  <div class="alert alert-warning">
+    ⏳ <strong>Bientôt périmé :</strong>
+    {% for item in expiring_soon_items %}
+      <span class="badge bg-dark text-warning ms-1">{{ item.name }}</span>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if low_stock_items %}
+  <div class="alert alert-warning">
+    ⚠️ <strong>Stock faible :</strong>
+    {% for item in low_stock_items %}
+      <span class="badge bg-warning text-dark ms-1">{{ item.name }}</span>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="card card-clean">
+  <div class="card-body">
+    <div class="mb-3 d-flex gap-2">
+      <form method="get" class="flex-grow-1 d-flex gap-2">
+        <select name="category" class="form-select w-auto" onchange="this.form.submit()">
+          <option value="all" {% if selected_category == 'all' %}selected{% endif %}>Toutes</option>
+          {% for cat in categories %}
+            <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+          {% endfor %}
+        </select>
+        <a href="{% url 'stock_list' %}" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
+      </form>
+
+      <div>
+        <a href="{% url 'stock_list' %}?export=csv" class="btn btn-outline-primary btn-sm">Export CSV</a>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Nom</th>
+            <th>Catégorie</th>
+            <th>Quantité</th>
+            <th>Seuil</th>
+            <th>Expiration</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+            <tr>
+              <td>{{ item.name }}</td>
+              <td><span class="badge bg-info text-dark">{{ item.category }}</span></td>
+              <td>{{ item.quantity }} {{ item.get_unit }}</td>
+              <td>{{ item.threshold }} {{ item.get_unit }}</td>
+              <td>{% if item.expiration_date %}{{ item.expiration_date }}{% else %}-{% endif %}</td>
+              <td>
+                {% if item.is_expired %}
+                  <span class="badge bg-danger badge-status me-1">Périmé</span>
+                {% endif %}
+                {% if item.is_expiring_soon %}
+                  <span class="badge bg-warning text-dark badge-status me-1">Bientôt périmé</span>
+                {% endif %}
+                {% if item.is_low_stock %}
+                  <span class="badge bg-warning text-dark badge-status me-1">Stock faible</span>
+                {% endif %}
+                {% if not item.is_expired and not item.is_expiring_soon and not item.is_low_stock %}
+                  <span class="badge bg-success badge-status">OK</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if request.user.userprofile.role == "manager" %}
+                  {% if item.id %}
+                    <a href="{% url 'stock_update' item.id %}" class="btn btn-sm btn-primary">Modifier</a>
+                    <a href="{% url 'stock_delete' item.id %}" class="btn btn-sm btn-danger">Supprimer</a>
+                  {% else %}
+                    <span class="text-muted">Indisponible pour édition</span>
+                  {% endif %}
+                {% else %}
+                  <span class="text-muted">Lecture seule</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7" class="text-center text-muted">Aucun produit disponible</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+

@@ -1,0 +1,5 @@
+eau|qty=36|th=28|low=False|exp=2025-12-11|expired=True|soon=False
+letu|qty=33|th=26|low=False|exp=2021-02-04|expired=True|soon=False
+mandarine|qty=6|th=3|low=False|exp=2025-12-20|expired=False|soon=True
+viande poulée|qty=0|th=3|low=True|exp=2025-12-19|expired=False|soon=True
+viande 🥩|qty=1|th=5|low=True|exp=2025-12-19|expired=False|soon=True

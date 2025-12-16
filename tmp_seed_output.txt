@@ -1,0 +1,10 @@
+created: 48|Tomate|Légume|qty=20|th=5|exp=2025-12-26
+created: 49|Lait|Boisson|qty=8|th=10|exp=2025-12-18
+created: 50|Farine|Autre|qty=50|th=10|exp=None
+created: 51|Oeuf|Autre|qty=5|th=10|exp=2025-12-15
+created: 52|Sucre|Autre|qty=100|th=20|exp=None
+created: 53|Beurre|Autre|qty=2|th=5|exp=2025-12-17
+created: 54|Poivre|Épice|qty=500|th=100|exp=None
+created: 55|Sel|Épice|qty=200|th=50|exp=None
+created: 56|Poulet|Viande|qty=0|th=3|exp=2025-12-19
+created: 57|Citron|Fruit|qty=12|th=5|exp=2026-01-15
