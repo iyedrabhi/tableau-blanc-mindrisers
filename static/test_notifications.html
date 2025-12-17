@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Test Notifications (Standalone)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    label {
+      display: block;
+      margin-top: 8px
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      box-sizing: border-box
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 8px 12px
+    }
+
+    #history {
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+      padding-top: 12px
+    }
+
+    .item {
+      padding: 8px;
+      border-bottom: 1px solid #eee
+    }
+
+    .meta {
+      color: #666;
+      font-size: 12px
+    }
+
+    header small {
+      display: block;
+      color: #666
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>Test Notifications — Standalone</h1>
+      <small>Utilise <code>BroadcastChannel</code> pour simuler un serveur WebSocket et tester les toasts/historique
+        entre onglets.</small>
+      <small>Ouvre cette page dans 2 fenêtres ou onglets différents pour tester.</small>
+    </header>
+
+    <section id="controls">
+      <label>Sender tab id (auto): <input id="tabId" readonly /></label>
+      <label>Titre: <input id="title" value="Nouvelle réservation" /></label>
+      <label>Message: <textarea id="message">Table 5 réservée pour 2 personnes.</textarea></label>
+      <label>Type: <select id="type">
+          <option value="reservation">reservation</option>
+          <option value="manager">manager</option>
+          <option value="reminder">reminder</option>
+        </select></label>
+      <label><input type="checkbox" id="sendToOthers" checked /> Envoyer aux autres onglets seulement (simulate
+        multi-tab)</label>
+      <button id="sendBtn">Envoyer notification (simulée)</button>
+      <button id="clearBtn">Effacer historique local</button>
+    </section>
+
+    <section id="history">
+      <h2>Historique (localStorage)</h2>
+      <div id="list"></div>
+    </section>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script>
+    toastr.options = {
+      "closeButton": true,
+      "debug": false,
+      "newestOnTop": true,
+      "progressBar": true,
+      "positionClass": "toast-top-right",
+      "preventDuplicates": false,
+      "onclick": null,
+      "showDuration": "300",
+      "hideDuration": "1000",
+      "timeOut": "12000",
+      "extendedTimeOut": "4000",
+      "showEasing": "swing",
+      "hideEasing": "linear",
+      "showMethod": "fadeIn",
+      "hideMethod": "fadeOut"
+    };
+
+    const TAB_ID_KEY = 'test_tab_id';
+    let tabId = localStorage.getItem(TAB_ID_KEY);
+    if (!tabId) tabId = Math.random().toString(36).slice(2, 9);
+    localStorage.setItem(TAB_ID_KEY, tabId);
+    document.getElementById('tabId').value = tabId;
+
+    const HISTORY_KEY = 'test_notification_history';
+    function loadHistory() {
+      let h = localStorage.getItem(HISTORY_KEY);
+      if (!h) return [];
+      try { return JSON.parse(h) } catch (e) { return [] }
+    }
+    function saveHistory(list) { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)) }
+    function addToHistory(item) {
+      const list = loadHistory();
+      list.unshift(item);
+      if (list.length > 200) list.pop();
+      saveHistory(list);
+      renderHistory();
+    }
+    function renderHistory() {
+      const list = loadHistory();
+      const container = document.getElementById('list');
+      container.innerHTML = '';
+      if (!list.length) { container.innerHTML = '<p>Aucun élément</p>'; return }
+      list.forEach(i => {
+        const div = document.createElement('div'); div.className = 'item';
+        div.innerHTML = '<strong>' + escapeHtml(i.title) + '</strong> <div class="meta">' + escapeHtml(i.type) + ' — ' + new Date(i.ts).toLocaleString() + ' — from ' + escapeHtml(i.from_tab) + '</div><div>' + escapeHtml(i.message) + '</div>';
+        container.appendChild(div);
+      })
+    }
+    function escapeHtml(s) { return (s + '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": "&#39;" }[c] }) }
+
+    let bcSupported = typeof BroadcastChannel !== 'undefined';
+    const channel = bcSupported ? new BroadcastChannel('test-notifs') : null;
+
+    function showNotification(payload) {
+      const opts = { timeOut: 12000 };
+      const body = payload.message;
+      switch (payload.type) {
+        case 'manager': toastr.info(body, payload.title, opts); break;
+        case 'reminder': toastr.warning(body, payload.title, opts); break;
+        default: toastr.success(body, payload.title, opts); break;
+      }
+      addToHistory(payload);
+    }
+
+    if (bcSupported) {
+      channel.onmessage = (ev) => {
+        const payload = ev.data;
+        showNotification(payload);
+      }
+    } else {
+      console.warn('BroadcastChannel not supported in this browser. Opened tabs will not sync.');
+    }
+
+    document.getElementById('sendBtn').addEventListener('click', () => {
+      const title = document.getElementById('title').value || 'Notification';
+      const message = document.getElementById('message').value || '';
+      const type = document.getElementById('type').value || 'reservation';
+      const sendToOthers = document.getElementById('sendToOthers').checked;
+      const payload = { title, message, type, from_tab: tabId, ts: Date.now() };
+      if (!sendToOthers) showNotification(payload);
+      if (bcSupported) channel.postMessage(payload);
+    })
+
+    document.getElementById('clearBtn').addEventListener('click', () => { localStorage.removeItem(HISTORY_KEY); renderHistory(); })
+
+    renderHistory();
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === HISTORY_KEY) renderHistory();
+    });
+  </script>
+</body>
+
+</html>

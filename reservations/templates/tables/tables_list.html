@@ -1,0 +1,25 @@
+<h1>Gestion des tables</h1>
+
+<table border="1">
+    <tr>
+        <th>Table</th>
+        <th>Zone</th>
+        <th>Places</th>
+        <th>Statut</th>
+    </tr>
+
+    {% for obj in tables %}
+    <tr>
+        <td>{{ obj.table.number }}</td>
+        <td>{{ obj.table.zone }}</td>
+        <td>{{ obj.table.seats }}</td>
+        <td>
+            {% if obj.status == 'reserved' %}
+                <span style="color:red;">Réservée</span>
+            {% else %}
+                <span style="color:green;">Libre</span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>

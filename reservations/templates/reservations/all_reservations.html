@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff8f0;
+      color: #333;
+      margin: 0;
+      padding: 0;
+  }
+
+  h1 {
+      text-align: center;
+      color: #d35400;
+      margin-top: 30px;
+      font-size: 2.5em;
+  }
+
+  table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+  }
+
+  thead {
+      background: #f39c12;
+      color: #fff;
+      text-transform: uppercase;
+  }
+
+  th, td {
+      padding: 12px 20px;
+      text-align: center;
+  }
+
+  tbody tr:nth-child(even) {
+      background: #fdf2e9;
+  }
+
+  tbody tr:hover {
+      background: #ffe0b2;
+      transition: 0.3s;
+  }
+
+  button {
+      background-color: #e67e22;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+  }
+
+  button:hover {
+      background-color: #d35400;
+  }
+
+  span.status-reserved {
+      color: #27ae60;
+      font-weight: bold;
+  }
+
+  span.status-canceled {
+      color: #c0392b;
+      font-weight: bold;
+  }
+
+  span.status-completed {
+      color: #7f8c8d;
+      font-weight: bold;
+  }
+</style>
+
+<h1>Toutes les Réservations</h1>
+
+{% if reservations %}
+<table>
+  <thead>
+    <tr>
+      <th>Client</th>
+      <th>Table</th>
+      <th>Date</th>
+      <th>Heure</th>
+      <th>Statut</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for res in reservations %}
+    <tr>
+      <td>{{ res.client.username }}</td>
+      <td>{{ res.table.number }}</td>
+      <td>{{ res.date }}</td>
+      <td>{{ res.start_time }} → {{ res.end_time }}</td>
+      <td>
+        {% if res.status == 'reserved' %}
+        <span class="status-reserved">{{ res.get_status_display }}</span>
+        {% elif res.status == 'canceled' %}
+        <span class="status-canceled">{{ res.get_status_display }}</span>
+        {% else %}
+        <span class="status-completed">{{ res.get_status_display }}</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if res.status == 'reserved' %}
+        <form method="post" action="{% url 'free_table' res.id %}" 
+              onsubmit="return confirm('Confirmer la libération de cette réservation ?');">
+          {% csrf_token %}
+          <button type="submit">Libérer table</button>
+        </form>
+        {% else %}
+        —
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p style="text-align:center; margin-top:20px;">Aucune réservation trouvée.</p>
+{% endif %}
+
+{% endblock %}

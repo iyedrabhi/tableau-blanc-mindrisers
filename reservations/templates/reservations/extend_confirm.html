@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Demander prolongation</h2>
+<p>Reservation: Table {{ reservation.table.number }} le {{ reservation.date }} à {{ reservation.start_time }}</p>
+<form method="post">
+  {% csrf_token %}
+  <label>Minutes supplémentaires: <input type="number" name="extra_minutes" value="30"></label><br>
+  <button type="submit">Demander prolongation</button>
+</form>
+{% endblock %}

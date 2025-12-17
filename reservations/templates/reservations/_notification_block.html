@@ -1,0 +1,76 @@
+<div style="
+      margin-bottom: 15px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-left: 5px solid {{ border_color }};
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    ">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+    <div style="flex: 1;">
+      <!-- Badge du type -->
+      <span style="
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            {% if notif.notification_type in confirmation_types %}
+              background: #d5f4e6;
+              color: #27ae60;
+            {% elif notif.notification_type in cancellation_types %}
+              background: #fadbd8;
+              color: #e74c3c;
+            {% elif notif.notification_type in reminder_types %}
+              background: #fff3e0;
+              color: #e67e22;
+            {% else %}
+              background: #d6eaf8;
+              color: #3498db;
+            {% endif %}
+          ">
+        {% if notif.notification_type in confirmation_types %}
+        ✅ CONFIRMATION
+        {% elif notif.notification_type in cancellation_types %}
+        ❌ ANNULATION
+        {% elif notif.notification_type in reminder_types %}
+        ⏰ RAPPEL
+        {% else %}
+        ℹ️ {{ notif.notification_type|default:"INFO" }}
+        {% endif %}
+      </span>
+
+      <!-- Titre -->
+      <h3 style="margin: 8px 0; color: #333; font-size: 16px;">
+        {{ notif.title }}
+      </h3>
+
+      <!-- Message -->
+      <p style="margin: 8px 0; color: #555; font-size: 14px; line-height: 1.5;">
+        {{ notif.message }}
+      </p>
+
+      <!-- Date -->
+      <small style="color: #999; font-size: 12px;">
+        📅 {{ notif.created_at|date:"d/m/Y à H:i" }}
+      </small>
+    </div>
+
+    <!-- Bouton Marquer comme lu -->
+    {% if not notif.is_read %}
+    <button onclick="markAsRead({{ notif.id }})" style="
+          padding: 6px 12px;
+          background: #3498db;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 12px;
+          white-space: nowrap;
+        ">
+      ✓ Marquer comme lu
+    </button>
+    {% endif %}
+  </div>
+</div>

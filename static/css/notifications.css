@@ -1,0 +1,128 @@
+/**
+ * Notification Toast Styles
+ */
+
+.notification-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  min-width: 300px;
+  max-width: 400px;
+  padding: 16px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #f0f4f8;
+  border-left: 4px solid #3498db;
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  z-index: 10000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.notification-toast.notification-info {
+  background-color: #e8f4f8;
+  border-left-color: #3498db;
+}
+
+.notification-toast.notification-success {
+  background-color: #e8f8f0;
+  border-left-color: #27ae60;
+  color: #27ae60;
+}
+
+.notification-toast.notification-warning {
+  background-color: #fff8e8;
+  border-left-color: #f39c12;
+  color: #e67e22;
+}
+
+.notification-toast.notification-error {
+  background-color: #f8e8e8;
+  border-left-color: #e74c3c;
+  color: #c0392b;
+}
+
+.notification-toast.notification-manager {
+  background-color: #f8e8f8;
+  border-left-color: #9b59b6;
+  color: #8e44ad;
+}
+
+.notification-toast.notification-client {
+  background-color: #e8f8e8;
+  border-left-color: #27ae60;
+  color: #229954;
+}
+
+.notification-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-close:hover {
+  opacity: 1;
+}
+
+.notification-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  padding-right: 24px;
+}
+
+.notification-message {
+  font-size: 13px;
+  line-height: 1.4;
+  padding-right: 24px;
+}
+
+.notification-toast.fade-out {
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+  .notification-toast {
+    min-width: 90%;
+    max-width: 90%;
+    left: 5%;
+    right: 5%;
+  }
+}

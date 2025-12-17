@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mes Rappels - Restaurant{% endblock %}
+
+{% block content %}
+<style>
+  .reminders-header {
+    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+    color: white;
+    padding: 30px 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .reminders-header h1 {
+    margin: 0;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .reminders-header p {
+    margin: 10px 0 0 0;
+    opacity: 0.9;
+  }
+
+  .no-notifications {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+  }
+
+  .no-notifications-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+  }
+</style>
+
+<div class="reminders-header">
+  <h1>⏰ Mes Rappels & Notifications</h1>
+  <p>Restez informé de toutes vos réservations</p>
+</div>
+
+<div style="max-width: 900px; margin: 0 auto;">
+  {% if notifications %}
+  {% for notif in notifications %}
+  {% if notif.notification_type in confirmation_types %}
+  {% with border_color="#27ae60" %}
+  {% include "reservations/_notification_block.html" %}
+  {% endwith %}
+  {% elif notif.notification_type in cancellation_types %}
+  {% with border_color="#e74c3c" %}
+  {% include "reservations/_notification_block.html" %}
+  {% endwith %}
+  {% elif notif.notification_type in reminder_types %}
+  {% with border_color="#e67e22" %}
+  {% include "reservations/_notification_block.html" %}
+  {% endwith %}
+  {% else %}
+  {% with border_color="#3498db" %}
+  {% include "reservations/_notification_block.html" %}
+  {% endwith %}
+  {% endif %}
+  {% endfor %}
+  {% else %}
+  <div class="no-notifications">
+    <div class="no-notifications-icon">🔔</div>
+    <h2>Aucune notification</h2>
+    <p>Vous n'avez pas encore de rappels ou notifications</p>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  function markAsRead(notificationId) {
+    fetch(`/reservations/notifications/${notificationId}/mark-read/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        }
+      })
+      .catch(error => console.error('Error:', error));
+  }
+</script>
+
+{% endblock %}

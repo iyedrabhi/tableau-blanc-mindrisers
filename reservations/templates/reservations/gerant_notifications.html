@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notifications - Gérant{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 30px auto; padding: 0 15px;">
+  <h1 style="text-align: center; color: #e67e22;">🔔 Notifications - Événements des Clients</h1>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin: 25px 0;">
+    <p style="font-size: 16px; color: #666; margin: 0;">
+      <strong>Total:</strong> <span style="color: #e67e22; font-size: 18px;">{{ total_count }}</span> notification(s)
+    </p>
+    {% if total_count > 0 %}
+    <form method="POST" style="display: inline;">
+      {% csrf_token %}
+      <button type="submit" style="
+          padding: 8px 16px;
+          background: #e74c3c;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 14px;
+        " onclick="return confirm('Supprimer toutes les notifications ?')">
+        🗑️ Effacer tout
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  <!-- ONGLETS/FILTRES -->
+  <div style="
+    display: flex;
+    gap: 10px;
+    margin: 25px 0;
+    border-bottom: 2px solid #e67e22;
+    flex-wrap: wrap;
+  ">
+    <a href="?filter=all" style="
+      padding: 12px 20px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      border-bottom: 3px solid {{ active_filter|default:'all' }};
+      color: {% if active_filter|default:'all' == 'all' %}#e67e22{% else %}#999{% endif %};
+      border-bottom-color: {% if active_filter|default:'all' == 'all' %}#e67e22{% else %}transparent{% endif %};
+      cursor: pointer;
+      transition: 0.2s;
+    ">
+      📋 Tous ({{ total_count }})
+    </a>
+
+    <a href="?filter=confirmations" style="
+      padding: 12px 20px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      color: {% if active_filter == 'confirmations' %}#27ae60{% else %}#999{% endif %};
+      border-bottom-color: {% if active_filter == 'confirmations' %}#27ae60{% else %}transparent{% endif %};
+      border-bottom: 3px solid {% if active_filter == 'confirmations' %}#27ae60{% else %}transparent{% endif %};
+      cursor: pointer;
+      transition: 0.2s;
+    ">
+      ✅ Confirmations ({{ confirmations_count }})
+    </a>
+
+    <a href="?filter=annulations" style="
+      padding: 12px 20px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      color: {% if active_filter == 'annulations' %}#e74c3c{% else %}#999{% endif %};
+      border-bottom-color: {% if active_filter == 'annulations' %}#e74c3c{% else %}transparent{% endif %};
+      border-bottom: 3px solid {% if active_filter == 'annulations' %}#e74c3c{% else %}transparent{% endif %};
+      cursor: pointer;
+      transition: 0.2s;
+    ">
+      ❌ Annulations ({{ annulations_count }})
+    </a>
+  </div>
+
+  <!-- LISTE DES NOTIFICATIONS -->
+  <div style="margin-top: 25px;">
+    {% if notifications %}
+    {% for notif in notifications %}
+    <div style="
+          margin-bottom: 15px;
+          padding: 15px;
+          background: #f9f9f9;
+          border-left: 5px solid 
+            {% if notif.notification_type == 'CONFIRMATION' %}#27ae60
+            {% elif notif.notification_type == 'ANNULATION' %}#e74c3c
+            {% else %}#3498db
+            {% endif %};
+          border-radius: 4px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        ">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="flex: 1;">
+          <!-- Badge du type -->
+          <span style="
+                display: inline-block;
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: bold;
+                margin-bottom: 8px;
+                {% if notif.notification_type == 'CONFIRMATION' %}
+                  background: #d5f4e6;
+                  color: #27ae60;
+                {% elif notif.notification_type == 'ANNULATION' %}
+                  background: #fadbd8;
+                  color: #e74c3c;
+                {% else %}
+                  background: #d6eaf8;
+                  color: #3498db;
+                {% endif %}
+              ">
+            {% if notif.notification_type == 'CONFIRMATION' %}
+            ✅ CONFIRMATION
+            {% elif notif.notification_type == 'ANNULATION' %}
+            ❌ ANNULATION
+            {% else %}
+            ℹ️ {{ notif.notification_type|default:"INFO" }}
+            {% endif %}
+          </span>
+
+          <!-- Titre -->
+          <h3 style="margin: 8px 0; color: #333; font-size: 16px;">
+            {{ notif.title }}
+          </h3>
+
+          <!-- Message -->
+          <p style="margin: 8px 0; color: #555; font-size: 14px; line-height: 1.5;">
+            {{ notif.message }}
+          </p>
+
+          <!-- Date -->
+          <small style="color: #999; font-size: 12px;">
+            📅 {{ notif.created_at|date:"d/m/Y H:i" }}
+          </small>
+        </div>
+
+        <!-- Icône de lecture -->
+        <div style="margin-left: 15px; text-align: center;">
+          {% if notif.read %}
+          <span style="color: #3498db; font-size: 16px;">👁️</span>
+          <p style="font-size: 11px; color: #999; margin: 3px 0;">Lue</p>
+          {% else %}
+          <span style="color: #e74c3c; font-size: 16px;">🔔</span>
+          <p style="font-size: 11px; color: #e74c3c; margin: 3px 0; font-weight: bold;">Nouveau</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div style="
+        text-align: center;
+        padding: 40px;
+        background: #f0f0f0;
+        border-radius: 8px;
+        color: #999;
+      ">
+      <p style="font-size: 18px; margin: 0;">
+        {% if active_filter == 'confirmations' %}
+        Aucune confirmation pour le moment
+        {% elif active_filter == 'annulations' %}
+        Aucune annulation pour le moment
+        {% else %}
+        Aucune notification pour le moment
+        {% endif %}
+      </p>
+      <p style="font-size: 14px; color: #bbb; margin: 10px 0 0 0;">
+        Les événements des clients apparaîtront ici
+      </p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  a:hover {
+    opacity: 0.8;
+  }
+</style>
+{% endblock %}

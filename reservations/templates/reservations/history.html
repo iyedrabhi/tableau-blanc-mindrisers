@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff8f0;
+      color: #333;
+      margin: 0;
+      padding: 0;
+  }
+
+  h1, p {
+      text-align: center;
+      color: #d35400;
+  }
+
+  table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+  }
+
+  thead {
+      background: #f39c12;
+      color: #fff;
+      text-transform: uppercase;
+  }
+
+  th, td {
+      padding: 12px 20px;
+      text-align: center;
+  }
+
+  tbody tr:nth-child(even) {
+      background: #fdf2e9;
+  }
+
+  tbody tr:hover {
+      background: #ffe0b2;
+      transition: 0.3s;
+  }
+
+  span.status-reserved {
+      color: #27ae60;
+      font-weight: bold;
+  }
+
+  span.status-canceled {
+      color: #c0392b;
+      font-weight: bold;
+  }
+
+  span.status-completed {
+      color: #7f8c8d;
+      font-weight: bold;
+  }
+
+  p.no-reservations {
+      font-size: 1.2em;
+      color: #7f8c8d;
+      margin-top: 20px;
+  }
+</style>
+
+<h1>Historique des Réservations</h1>
+<p>Liste des réservations terminées, annulées ou passées.</p>
+
+{% if reservations %}
+<table>
+  <thead>
+    <tr>
+      <th>Table</th>
+      <th>Client</th>
+      <th>Date</th>
+      <th>Heure début</th>
+      <th>Heure fin</th>
+      <th>Statut</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in reservations %}
+    <tr>
+      <td>{{ r.table.number }}</td>
+      <td>{{ r.client.username }}</td>
+      <td>{{ r.date }}</td>
+      <td>{{ r.start_time }}</td>
+      <td>{{ r.end_time }}</td>
+      <td>
+        {% if r.status == 'reserved' %}
+        <span class="status-reserved">{{ r.get_status_display }}</span>
+        {% elif r.status == 'canceled' %}
+        <span class="status-canceled">{{ r.get_status_display }}</span>
+        {% else %}
+        <span class="status-completed">{{ r.get_status_display }}</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="no-reservations">Aucune réservation trouvée dans l'historique.</p>
+{% endif %}
+
+{% endblock %}

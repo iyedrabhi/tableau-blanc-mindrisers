@@ -1,0 +1,119 @@
+{% extends "reservations/base.html" %}
+{% load static %}
+
+{% block title %}Rappels de Réservations - Client{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 30px auto;">
+  <h1>⏰ Mes Rappels de Réservations</h1>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0;">
+    <p style="font-size: 16px; color: #666;">
+      Total: <strong style="color: #27ae60; font-size: 1.2em;">{{ notifications|length }}</strong> notification(s)
+    </p>
+  </div>
+
+  <div style="
+    background: #e8f5e9;
+    border-left: 5px solid #27ae60;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  ">
+    <p style="margin: 0; color: #2e7d32; font-weight: bold;">
+      💡 <strong>Système de Rappels Intelligents</strong>
+    </p>
+    <p style="margin: 10px 0 0 0; color: #558b2f; font-size: 14px;">
+      ⏰ Réservation avant 12h00 → Rappel 2h avant<br>
+      ⏰ Réservation à partir de 12h00 → Rappel 4h avant<br>
+      📬 Vous recevrez une notification automatique à l'heure prévue.
+    </p>
+  </div>
+
+  {% if notifications %}
+  <ul id="notifications-list" style="list-style: none; padding: 0;">
+    {% for notif in notifications %}
+    <li style="
+        background: linear-gradient(135deg, #f0f9ff 0%, #e3f2fd 100%);
+        border-left: 5px solid #1976d2;
+        margin: 15px 0;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      ">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="flex: 1;">
+          {% if notif.notification_type == 'client' or notif.notification_type == 'reservation' %}
+          <span style="
+                display: inline-block;
+                background: #27ae60;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: bold;
+                margin-bottom: 8px;
+              ">✅ CONFIRMATION</span>
+          {% elif notif.notification_type == 'cancel' %}
+          <span style="
+                display: inline-block;
+                background: #e74c3c;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: bold;
+                margin-bottom: 8px;
+              ">❌ ANNULATION</span>
+          {% else %}
+          <span style="
+                display: inline-block;
+                background: #3498db;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: bold;
+                margin-bottom: 8px;
+              ">ℹ️ INFO</span>
+          {% endif %}
+          <h3 style="margin: 10px 0; color: #1976d2; font-size: 1.1em;">
+            {{ notif.title }}
+          </h3>
+          <p style="margin: 8px 0; color: #333; line-height: 1.5;">
+            {{ notif.message }}
+          </p>
+          <small style="color: #999; display: block; margin-top: 8px;">
+            📅 {{ notif.created_at|date:"d/m/Y H:i" }}
+          </small>
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div style="
+      text-align: center;
+      padding: 40px 20px;
+      background: #f9f9f9;
+      border-radius: 10px;
+      border: 2px dashed #ddd;
+    ">
+    <p style="font-size: 18px; color: #666;">
+      📭 Aucun rappel pour le moment
+    </p>
+    <p style="font-size: 14px; color: #999;">
+      Créez une réservation pour recevoir un rappel automatique.
+    </p>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  #notifications-list li:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+    transition: all 0.3s ease;
+  }
+</style>
+{% endblock %}

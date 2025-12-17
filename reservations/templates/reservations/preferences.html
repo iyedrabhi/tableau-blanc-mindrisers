@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Préférences de notifications</h2>
+<form method="post">
+  {% csrf_token %}
+  <label><input type="checkbox" name="email_reminders" {% if pref and pref.email_reminders %}checked{% endif %}> Rappels
+    par email</label><br>
+  <label><input type="checkbox" name="sms_reminders" {% if pref and pref.sms_reminders %}checked{% endif %}> Rappels par
+    SMS</label><br>
+  <label><input type="checkbox" name="inapp_reminders" {% if pref and pref.inapp_reminders %}checked{% endif %}> Rappels
+    in-app</label><br>
+  <button type="submit">Enregistrer</button>
+</form>
+{% endblock %}

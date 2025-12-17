@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff8f0;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+
+  .client-nav {
+    display: none;
+  }
+
+  h1,
+  h2 {
+    text-align: center;
+    color: #d35400;
+    margin-top: 30px;
+  }
+
+  form {
+    width: 90%;
+    max-width: 500px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+  }
+
+  input[type="date"],
+  input[type="time"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #e67e22;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+  }
+
+  button:hover {
+    background-color: #d35400;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    width: 90%;
+    max-width: 600px;
+    margin: 20px auto;
+  }
+
+  ul li {
+    background: #fff3e0;
+    margin: 10px 0;
+    padding: 15px 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+  }
+
+  ul li:hover {
+    transform: translateY(-3px);
+    background: #ffe0b2;
+  }
+
+  ul li form button {
+    width: auto;
+    padding: 8px 15px;
+    font-size: 0.9em;
+  }
+
+  p {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1em;
+  }
+</style>
+
+<h1>Choisir une table</h1>
+
+<form method="post" style="max-width: 700px;">
+  {% csrf_token %}
+
+  <!-- Date & Heure -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+    <div>
+      <label>📅 Date</label>
+      <input type="date" name="date" value="{{ date }}" required>
+    </div>
+    <div>
+      <label>⏰ Heure début</label>
+      <input type="time" name="start_time" value="{{ start_time }}" required>
+    </div>
+    <div>
+      <label>⏰ Heure fin</label>
+      <input type="time" name="end_time" value="{{ end_time }}" required>
+    </div>
+  </div>
+
+  <!-- Filtres avancés -->
+  <h3 style="margin-top: 20px; color: #d35400;">🔍 Filtres avancés (optionnel)</h3>
+
+  <!-- Barre de Recherche -->
+  <div
+    style="margin-bottom: 20px; padding: 15px; background: #fff9f0; border-radius: 8px; border-left: 4px solid #e67e22;">
+    <label style="display: block; margin-bottom: 8px; font-weight: bold;">🔎 Rechercher une table</label>
+    <input type="text" name="search" placeholder="Entrez numero, categorie, ambiance, places, ou accessibilite..."
+      value="{{ search_query }}"
+      style="width: 100%; padding: 10px; border: 2px solid #e67e22; border-radius: 5px; font-size: 1em; box-sizing: border-box;">
+    <small style="display: block; margin-top: 5px; color: #666;">Ex: "5", "VIP", "Calme", "4 places", "PMR", "WiFi",
+      "Chaise haute"</small>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+    <div>
+      <label>Catégorie</label>
+      <select name="category" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+        <option value="">-- Tous --</option>
+        <option value="Standard" {% if filter_category == 'Standard' %}selected{% endif %}>Standard</option>
+        <option value="VIP" {% if filter_category == 'VIP' %}selected{% endif %}>VIP</option>
+        <option value="Famille" {% if filter_category == 'Famille' %}selected{% endif %}>Famille</option>
+      </select>
+    </div>
+    <div>
+      <label>Emplacement</label>
+      <select name="location" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+        <option value="">-- Tous --</option>
+        <option value="intérieur" {% if filter_location == 'intérieur' %}selected{% endif %}>Intérieur</option>
+        <option value="terrasse" {% if filter_location == 'terrasse' %}selected{% endif %}>Terrasse</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="margin-top: 15px;">
+    <label>Ambiance / Vue</label>
+    <input type="text" name="ambiance" placeholder="Ex: Jardin, Calme, Vue sur parc..." value="{{ filter_ambiance }}"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+  </div>
+
+  <!-- Accessibilité -->
+  <h3 style="margin-top: 20px; color: #d35400;">♿ Accessibilité & Particularités</h3>
+  <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+      <input type="checkbox" name="pmr" {% if filter_pmr %}checked{% endif %}> PMR (Mobilité réduite)
+    </label>
+    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+      <input type="checkbox" name="highchair" {% if filter_highchair %}checked{% endif %}> Chaise haute enfant
+    </label>
+    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+      <input type="checkbox" name="power" {% if filter_power %}checked{% endif %}> Prise électrique
+    </label>
+    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+      <input type="checkbox" name="wifi" {% if filter_wifi %}checked{% endif %}> WiFi
+    </label>
+  </div>
+
+  <button type="submit" style="margin-top: 20px;">🔎 Voir tables libres</button>
+</form>
+
+{% if tables %}
+<h2 style="margin-top: 30px;">✅ {{ tables|length }} table(s) disponible(s)</h2>
+<ul style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: none;">
+  {% for table in tables %}
+  <li style="display: flex; flex-direction: column; justify-content: space-between;">
+    <div>
+      <strong style="font-size: 1.2em; color: #d35400;">Table {{ table.number }}</strong>
+      {% if table.category %}
+      <div style="color: #666; margin-top: 8px;">📂 Catégorie: <strong>{{ table.category }}</strong></div>
+      {% endif %}
+      {% if table.location %}
+      <div style="color: #666;">📍 Emplacement: <strong>{{ table.location }}</strong></div>
+      {% endif %}
+      {% if table.zone %}
+      <div style="color: #666;">🏠 Zone: <strong>{{ table.zone }}</strong></div>
+      {% endif %}
+      {% if table.ambiance %}
+      <div style="color: #666;">🎨 Ambiance: <strong>{{ table.ambiance }}</strong></div>
+      {% endif %}
+
+      <!-- Accessibilité -->
+      <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+        {% if table.pmr %}
+        <span style="background: #c8e6c9; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">♿ PMR</span>
+        {% endif %}
+        {% if table.highchair %}
+        <span style="background: #b3e5fc; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">👶 Chaise
+          haute</span>
+        {% endif %}
+        {% if table.power %}
+        <span style="background: #fff9c4; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">🔌
+          Électricité</span>
+        {% endif %}
+        {% if table.wifi %}
+        <span style="background: #ffe0b2; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">📶 WiFi</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <form action="{% url 'create_reservation' table.id %}" method="post" style="margin-top: 15px;">
+      {% csrf_token %}
+      <input type="hidden" name="date" value="{{ date }}">
+      <input type="hidden" name="start_time" value="{{ start_time }}">
+      <input type="hidden" name="end_time" value="{{ end_time }}">
+      <button type="submit" style="width: 100%; padding: 10px;">✅ Réserver cette table</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% elif tables is not None %}
+<p style="text-align: center; color: #d35400; font-weight: bold; margin-top: 30px;">❌ Aucune table disponible pour ces
+  critères. Essaie avec d'autres paramètres.</p>
+{% endif %}
+
+{% endblock %}

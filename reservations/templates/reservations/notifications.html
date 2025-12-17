@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notifications - Restaurant{% endblock %}
+
+{% block content %}
+<style>
+  /* Navigation du CLIENT */
+  .client-nav {
+    display: none;
+  }
+
+  .notifications-container {
+    width: 90%;
+    max-width: 700px;
+    margin: 30px auto;
+  }
+
+  .notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .notifications-header h2 {
+    margin: 0;
+    color: #d35400;
+  }
+
+  .notification-count {
+    background: #e67e22;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  #notifications-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .notification-item {
+    background: white;
+    border-left: 4px solid #f39c12;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    transition: all 0.3s ease;
+    animation: slideInLeft 0.3s ease-out;
+  }
+
+  .notification-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(5px);
+  }
+
+  .notification-item.notification-client,
+  .notification-item.notification-reservation {
+    border-left-color: #27ae60;
+  }
+
+  .notification-item.notification-manager,
+  .notification-item.notification-admin {
+    border-left-color: #e67e22;
+  }
+
+  .notification-item.notification-error,
+  .notification-item.notification-cancel {
+    border-left-color: #e74c3c;
+  }
+
+  .notification-content {
+    flex-grow: 1;
+    margin-right: 15px;
+  }
+
+  .notification-content strong {
+    display: block;
+    color: #2c3e50;
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+  .notification-content p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+  }
+
+  .notification-content small {
+    display: block;
+    color: #999;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  .notification-close {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .notification-close:hover {
+    color: #e74c3c;
+    transform: scale(1.2);
+  }
+
+  .notifications-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 2px dashed #ddd;
+  }
+
+  .notifications-empty i {
+    font-size: 48px;
+    color: #ddd;
+    margin-bottom: 20px;
+  }
+
+  .notifications-footer {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .clear-all-btn {
+    background: #e74c3c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+
+  .clear-all-btn:hover {
+    background: #c0392b;
+  }
+
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-20px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-top: 5px;
+  }
+
+  .status-badge.client {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-badge.manager {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .status-badge.error {
+    background: #f8d7da;
+    color: #721c24;
+  }
+</style>
+
+<div class="notifications-container">
+  <div class="notifications-header">
+    <h2>📬 Mes Notifications</h2>
+    <span class="notification-count">{{ notifications.count }}</span>
+  </div>
+
+  <ul id="notifications-list">
+    {% for n in notifications %}
+    <li class="notification-item notification-{{ n.notification_type }}">
+      <div class="notification-content">
+        <strong>{{ n.title }}</strong>
+        <p>{{ n.message }}</p>
+        <small>{{ n.created_at|date:"d/m/Y H:i:s" }}</small>
+        {% if n.notification_type %}
+        <span class="status-badge {{ n.notification_type }}">{{ n.notification_type|upper }}</span>
+        {% endif %}
+      </div>
+      <button class="notification-close" onclick="this.parentElement.remove()">✕</button>
+    </li>
+    {% empty %}
+    <div class="notifications-empty">
+      <p>📭 Aucune notification pour le moment.</p>
+      <p style="font-size: 12px; color: #bbb;">Les notifications apparaîtront ici en temps réel</p>
+    </div>
+    {% endfor %}
+  </ul>
+
+  {% if notifications %}
+  <div class="notifications-footer">
+    <form method="POST" action="{% url 'gerant_notifications' %}" style="display: inline;">
+      {% csrf_token %}
+      <button type="submit" class="clear-all-btn">🗑️ Effacer toutes les notifications</button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Indication utilisateur connecté pour WebSocket -->
+<script>
+  document.documentElement.dataset.authenticated = 'true';
+</script>
+
+{% endblock %}
