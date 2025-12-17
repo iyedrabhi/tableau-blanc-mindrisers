@@ -20,11 +20,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 import os
 from django.shortcuts import redirect
+from LivraisonApp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('commandes/', include('CommandesApp.urls')),
+    path("", include('LivraisonApp.urls')),
+    path("",views.home, name="home"),
 ]
-
 def redirect_404(request, exception=None):
     return redirect('/commandes/commandes_list/')   # <-- your target URL
 

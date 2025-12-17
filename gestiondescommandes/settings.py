@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'CommandesApp',
     'rest_framework',
     'widget_tweaks',
+    'LivraisonApp',
+
 ]
 
 MIDDLEWARE = [

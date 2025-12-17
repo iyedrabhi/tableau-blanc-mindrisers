@@ -1,0 +1,250 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Passer une livraison</title>
+
+    <!-- Ton CSS global -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f6fa;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 26px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        form {
+            max-width: 650px;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            color: #444;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: #fff;
+        }
+
+        input[readonly] {
+            background-color: #e9ecef;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background-color: #28a745;
+            color: #fff;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        #map {
+            width: 100%;
+            height: 380px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #ccc;
+        }
+
+        .help-text {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .errors {
+            color: #b30000;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            margin-top: 15px;
+            display: inline-block;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Passer une livraison</h1>
+
+    {% if form.non_field_errors %}
+        <div class="errors">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+<form method="post" novalidate onsubmit="return confirmerLivraison();">
+    {% csrf_token %}
+
+    <div class="form-group">
+        <label for="{{ form.id_client.id_for_label }}">ID Client :</label>
+        {{ form.id_client }}
+        {% if form.id_client.errors %}
+            <div class="errors">{{ form.id_client.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.id_commande.id_for_label }}">Numéro de commande</label>
+        {{ form.id_commande }}
+        {% if form.id_commande.errors %}
+            <div class="errors">{{ form.id_commande.errors }}</div>
+        {% endif %}
+    </div>
+
+   
+
+    <!-- Carte Leaflet -->
+    <div id="map"></div>
+
+    <p class="help-text">
+        Cliquez sur la carte pour choisir le point de livraison. L'adresse sera remplie automatiquement.
+    </p>
+
+    {{ form.latitude }}
+    {{ form.longitude }}
+
+    {% if form.latitude.errors %}
+        <div class="errors">{{ form.latitude.errors }}</div>
+    {% endif %}
+    {% if form.longitude.errors %}
+        <div class="errors">{{ form.longitude.errors }}</div>
+    {% endif %}
+
+    <button type="submit">Confirmer la livraison</button>
+     <!-- ✅ Adresse à l’intérieur du form -->
+    <div class="form-group">
+        <label for="{{ form.adresse_complete.id_for_label }}">Adresse de livraison</label>
+        {{ form.adresse_complete }}
+        {% if form.adresse_complete.errors %}
+            <div class="errors">{{ form.adresse_complete.errors }}</div>
+        {% endif %}
+    </div>
+</form>
+
+
+    <a href="{% url 'livraison_list_client' %}" class="back-link">Voir mes livraisons</a>
+
+    <!-- Leaflet JS -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin="">
+    </script>
+
+    <script>
+        // Rendre le champ adresse non modifiable
+        document.getElementById('id_adresse_complete')?.setAttribute('readonly', true);
+
+        // Centre initial (Monastir)
+        var map = L.map('map').setView([35.777, 10.826], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var marker = null;
+
+        var latInput = document.getElementById('id_latitude');
+        var lngInput = document.getElementById('id_longitude');
+        var addressInput = document.getElementById('id_adresse_complete');
+
+        if (latInput.value && lngInput.value) {
+            marker = L.marker([latInput.value, lngInput.value]).addTo(map);
+            map.setView([latInput.value, lngInput.value], 15);
+        }
+
+        map.on('click', function(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+
+            latInput.value = lat;
+            lngInput.value = lng;
+
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        addressInput.value = data.display_name;
+                    }
+                })
+                .catch(error => console.error("Erreur reverse geocoding:", error));
+        });
+    </script>
+    <script>
+    function confirmerLivraison() {
+        const clientId = document.getElementById('id_client')?.value || "";
+        const commandeId = document.getElementById('id_commande')?.value || "";
+        const adresse = document.getElementById('id_adresse_complete')?.value || "";
+
+        let message = "Voulez-vous vraiment confirmer cette livraison ?\n\n";
+        message += "ID Client : " + (clientId || "-") + "\n";
+        message += "ID Commande : " + (commandeId || "-") + "\n";
+        message += "Adresse : " + (adresse || "-") + "\n\n";
+        message += "Cliquer sur OK pour confirmer, Annuler pour revenir au formulaire.";
+
+        return confirm(message);
+    }
+</script>
+
+
+</body>
+</html>

@@ -5,7 +5,6 @@ import qrcode
 from io import BytesIO
 from django.core.files import File
 
-
 class Plate(models.Model):
     title = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -63,6 +62,16 @@ class Commande(models.Model):
 
         # Save once at the end
         super().save(update_fields=["total_price", "qr_code"])
+
+
+        # 🔥 AUTO CREATE LIVRAISON
+        if self.type_commande == "livraison":
+            from LivraisonApp.models import Livraison  # 👈 lazy import
+
+            Livraison.objects.get_or_create(
+                commande=self,
+                defaults={"statut": "en_attente"}
+            )
 
     def __str__(self):
         return f"Commande {self.id} - {self.customer.username}"
