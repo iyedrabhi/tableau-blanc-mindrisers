@@ -1,102 +1,16 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Mes livraisons</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <style>
-        body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f6fa;
-        }
-        h1 { font-size: 26px; margin-bottom: 20px; }
-        form {
-            max-width: 400px;
-            background: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
-        .form-group { margin-bottom: 10px; }
-        label { font-weight: 600; margin-bottom: 4px; display: block; }
-        input[type="number"] {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        button[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background-color: #007bff;
-            color: #fff;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-        }
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            text-align: left;
-            font-size: 14px;
-        }
-        th {
-            background-color: #f0f0f0;
-            font-weight: 700;
-        }
-        tr:last-child td {
-            border-bottom: none;
-        }
-        .back-link {
-            margin-top: 15px;
-            display: inline-block;
-            text-decoration: none;
-            color: #007bff;
-        }
-        .back-link:hover { text-decoration: underline; }
-        .no-results {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #555;
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <h1>Mes livraisons</h1>
+{% block title %}Mes Livraisons{% endblock %}
 
-    <!-- Formulaire pour saisir l'ID client -->
-    <form method="post" novalidate>
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="{{ form.id_client.id_for_label }}">ID Client :</label>
-            {{ form.id_client }}
-            {% if form.id_client.errors %}
-                <div class="errors">{{ form.id_client.errors }}</div>
-            {% endif %}
-        </div>
-        <button type="submit">Afficher mes livraisons</button>
-    </form>
+{% block content %}
+<div class="container mt-4">
 
-    {% if livraisons != None %}
-        {% if livraisons %}
-            <p>Résultats pour le client ID : <strong>{{ id_client }}</strong></p>
-            <table>
-                <thead>
+    <h2>Mes livraisons</h2>
+
+    {% if livraisons %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover shadow-sm rounded">
+                <thead class="table-dark">
                     <tr>
                         <th>ID Livraison</th>
                         <th>ID Commande</th>
@@ -110,21 +24,25 @@
                     {% for liv in livraisons %}
                     <tr>
                         <td>{{ liv.id }}</td>
-                        <td>{{ liv.id_commande }}</td>
-                        <td>{{ liv.adresse_complete }}</td>
+                        <td><a href="{% url 'commande_detail' liv.commande.id %}">{{ liv.commande_id }}</a></td>
+                        <td>    
+                            {% if liv.adresse_livraison %}
+                                <a href="{{ liv.maps_link }}" target="_blank">{{ liv.adresse_livraison }}</a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                         <td>{{ liv.get_statut_display }}</td>
-                        <td>{{ liv.date_creation }}</td>
-                        <td>{{ liv.date_livraison|default:"-" }}</td>
+                        <td>{{ liv.commande.created_at|date:"d/m/Y H:i" }}</td>
+                        <td>{{ liv.date_arrivee|default:"-"|date:"d/m/Y H:i" }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-        {% else %}
-            <p class="no-results">Aucune livraison trouvée pour ce client.</p>
-        {% endif %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning">Vous n'avez aucune livraison pour le moment.</div>
     {% endif %}
 
-    <a href="{% url 'livraison_create' %}" class="back-link">Passer une nouvelle livraison</a>
-
-</body>
-</html>
+</div>
+{% endblock %}

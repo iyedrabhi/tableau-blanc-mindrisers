@@ -1,46 +1,65 @@
 from django import forms
 from .models import Livraison
+from django.contrib.auth.models import User
 
+STATUT_CHOICES = [
+    ("En cours de livraison", "En cours de livraison"),
+    ("Prête", "Prête"),
+    ("Livrée", "Livrée"),
+    ("Annulée", "Annulée"),
+]
 
 class LivraisonForm(forms.ModelForm):
+    statut = forms.ChoiceField(choices=STATUT_CHOICES)
+    id_livreur = forms.ModelChoiceField(
+        queryset=User.objects.all(),  # tous les users, pas de filtre
+        required=False,
+        empty_label="Non affecté"
+    )
+
     class Meta:
         model = Livraison
-
-        # 🔹 Champs que le client manipule directement
-        fields = [
-            "id_client",
-            "commande",
-            "adresse_complete",
-            "latitude",
-            "longitude",
-        ]
-
-        labels = {
-            "id_client": "ID Client",
-            "commande": "Numéro de commande",
-            "adresse_complete": "Adresse de livraison",
-            "latitude": "Latitude",
-            "longitude": "Longitude",
-        }
-
+        fields = ['customer', 'commande', 'adresse_livraison', 'statut', 'id_livreur']
         widgets = {
-            "id_client": forms.NumberInput(attrs={
-                "placeholder": "Ex : 501",
-                "class": "form-control",
-            }),
-            "commande": forms.NumberInput(attrs={
-                "placeholder": "Ex : 1023",
-                "class": "form-control",
-            }),
-            "adresse_complete": forms.TextInput(attrs={
-                "placeholder": "Ex : Rue Taieb El Mhiri, Monastir",
-                "class": "form-control",
-            }),
-            # Ces deux champs seront remplis par la carte (JS),
-            # on peut les afficher en readonly ou les cacher dans le template
-            "latitude": forms.HiddenInput(),
-            "longitude": forms.HiddenInput(),
+            'customer': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'commande': forms.TextInput(attrs={'readonly': 'readonly'}),
         }
+
         # formulaire pour que le client saisisse son ID
 class ClientLivraisonSearchForm(forms.Form):
-    id_client = forms.IntegerField(label="ID Client", required=True)
+    customer = forms.IntegerField(label="customer", required=True)
+
+
+""" from django import forms
+from .models import Livraison
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+STATUT_CHOICES = [
+    ("Prête", "Prête"),
+    ("Livrée", "Livrée"),
+    ("Annulée", "Annulée"),
+]
+
+class LivraisonForm(forms.ModelForm):
+    id_livreur = forms.ModelChoiceField(
+        queryset=User.objects.filter(role='livreur'),  # filtre par role
+        required=False,
+        label="Livreur",
+        empty_label="Sélectionner un livreur"
+    )
+
+    statut = forms.ChoiceField(
+        choices=STATUT_CHOICES,
+        label="Statut"
+    )
+
+    class Meta:
+        model = Livraison
+        fields = ['customer', 'commande', 'adresse_livraison', 'statut', 'id_livreur']
+        widgets = {
+            'customer': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'commande': forms.TextInput(attrs={'readonly': 'readonly'}),
+        }
+"""

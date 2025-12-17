@@ -69,14 +69,24 @@
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'commande_create' %}active{% endif %}" href="{% url 'commande_create' %}">Nouvelle Commande</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'commande_list' %}active{% endif %}" href="{% url 'commande_list' %}">Mes Commandes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" >Déconnexion</a>
-                    </li>
+            <a class="nav-link {% if request.resolver_match.url_name == 'commande_create' %}active{% endif %}" href="{% url 'commande_create' %}">Nouvelle Commande</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'commande_list' %}active{% endif %}" href="{% url 'commande_list' %}">Mes Commandes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'livraison_list_client' %}active{% endif %}" href="{% url 'livraison_list_client' %}">Mes Livraisons</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'livraison_list' %}active{% endif %}" href="{% url 'livraison_list' %}">Toutes les Livraisons</a>
+        </li>
+        <a class="nav-link {% if request.resolver_match.url_name == 'livreur_livraisons' %}active{% endif %}" 
+           href="{% url 'livreur_livraisons' livreur_id=user.id %}">
+            Livraisons livreur
+        </a>
+        <li class="nav-item">
+            <a class="nav-link" >Déconnexion</a>
+        </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" >Connexion</a>

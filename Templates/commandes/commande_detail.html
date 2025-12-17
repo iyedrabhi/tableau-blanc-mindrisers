@@ -18,7 +18,9 @@
             <p><strong>Nom :</strong> {{ commande.customer.username }}</p>
             <p><strong>Type de commande :</strong> {{ commande.type_commande }}</p>
             <p><strong>Commentaire :</strong> {{ commande.comment|default:"Aucun commentaire" }}</p>
-
+            {% if commande.adresse_livraison %}
+    <p><strong>Adresse de livraison :</strong> {{ commande.adresse_livraison }}</p>
+{% endif %}
             <hr>
 
             <!-- Plats -->

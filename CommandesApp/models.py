@@ -20,6 +20,7 @@ class Commande(models.Model):
         ("En attente", "En attente"),
         ("En préparation", "En préparation"),
         ("Prête", "Prête"),
+        ("En cours de livraison", "En cours de livraison"),
         ("Livrée", "Livrée"),
         ("Annulée", "Annulée"),
     ]
@@ -28,10 +29,12 @@ class Commande(models.Model):
     plates = models.ManyToManyField('Plate', related_name='commandes')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, editable=False)
     type_commande = models.CharField(
-        max_length=20,
+        max_length=30,
         choices=[("livraison", "Livraison"), ("sur place", "Sur place")]
     )
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="En attente")
+    adresse_livraison = models.CharField(max_length=255, blank=True, null=True)
+
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default="En attente")
     created_at = models.DateTimeField(auto_now_add=True)
     comment = models.TextField(blank=True, null=True)
     qr_code = models.ImageField(upload_to="qr_codes/", blank=True, null=True)
@@ -70,8 +73,12 @@ class Commande(models.Model):
 
             Livraison.objects.get_or_create(
                 commande=self,
-                defaults={"statut": "en_attente"}
-            )
+                defaults={
+                    "statut": "en_attente",
+                    "customer": self.customer,
+                    "adresse_livraison": self.adresse_livraison,  # ✅ add address
+                })
+            self.livraison.all().update(adresse_livraison=self.adresse_livraison)
 
     def __str__(self):
         return f"Commande {self.id} - {self.customer.username}"

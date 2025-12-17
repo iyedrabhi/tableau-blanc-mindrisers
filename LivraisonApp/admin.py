@@ -10,9 +10,9 @@ class LivraisonAdmin(admin.ModelAdmin):
         "date_arrivee",
         "id_livreur",
         "commande",
-        "id_client",
-        "adresse_complete",
+        "customer",
+        "adresse_livraison",
     )
     
     list_filter = ("statut",)  # Filtres à droite
-    search_fields = ("id", "adresse_complete")  # Barre de recherche
+    search_fields = ("id", "adresse_livraison")  # Barre de recherche

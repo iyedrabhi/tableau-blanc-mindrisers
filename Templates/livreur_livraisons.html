@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">📋 Mes Livraisons</h2>
+
+    <!-- Mes commandes en cours -->
+    <h4 class="mb-3">📦 Ma commande en cours</h4>
+    <div class="row">
+        {% for livraison in mes_en_cours %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg border-0" style="border-radius: 15px; background-color:#fff4e5;">
+                <div class="card-body">
+                    <h5>🚚 Livraison #{{ livraison.id }}</h5>
+                    <span class="badge 
+                        {% if livraison.statut == 'En attente' %}bg-warning
+                        {% elif livraison.statut == 'En préparation' or livraison.statut == 'En cours de livraison' %}bg-info
+                        {% elif livraison.statut == 'Annulée' %}bg-danger
+                        {% elif livraison.statut == 'Livrée' %}bg-success
+                        {% endif %}">{{ livraison.get_statut_display }}</span>
+
+                    <p><strong>Client :</strong> {{ livraison.customer.username }}</p>
+                    <p><strong>Adresse :</strong> 
+                        {% if livraison.maps_link %}
+                            <a href="{{ livraison.maps_link }}" target="_blank">{{ livraison.adresse_livraison }}</a>
+                        {% else %}
+                            {{ livraison.adresse_livraison|default:"—" }}
+                        {% endif %}
+                    </p>
+
+                    <form method="post" action="{% url 'livreur_update_statut_row' livreur_id livraison.id %}">
+                        {% csrf_token %}
+                        <select name="statut" class="form-select form-select-sm mb-2">
+                            <option value="En cours de livraison" {% if livraison.statut == "En cours de livraison" %}selected{% endif %}>En cours de livraison</option>
+                            <option value="Livrée" {% if livraison.statut == "Livrée" %}selected{% endif %}>Livrée</option>
+                            <option value="Annulée" {% if livraison.statut == "Annulée" %}selected{% endif %}>Annulée</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-success">Mettre à jour</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">Aucune livraison en cours.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Nouvelles commandes -->
+    <h4 class="mb-3 mt-5">🆕 Nouvelles commandes</h4>
+    <div class="row">
+        {% for livraison in nouvelles %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5>🚚 Livraison #{{ livraison.id }}</h5>
+                    <p><strong>Client :</strong> {{ livraison.customer.username }}</p>
+                    <p><strong>Adresse :</strong> 
+                        {% if livraison.maps_link %}
+                            <a href="{{ livraison.maps_link }}" target="_blank">{{ livraison.adresse_livraison }}</a>
+                        {% else %}
+                            {{ livraison.adresse_livraison|default:"—" }}
+                        {% endif %}
+                    </p>
+
+                    {% if has_in_progress %}
+                        <button class="btn btn-sm btn-dark" disabled title="Vous devez terminer votre commande en cours">Prendre cette livraison</button>
+                    {% else %}
+                        <form method="post" action="{% url 'livreur_affecter_livraison' livreur_id livraison.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-dark">Prendre cette livraison</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">Aucune nouvelle commande.</p>
+        {% endfor %}
+    </div>
+    <!-- Commandes précédentes -->
+    <h4 class="mb-3 mt-5">📜 Commandes précédentes</h4>
+    {% if precedentes %}
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>#ID</th>
+                    <th>Client</th>
+                    <th>Date sortie</th>
+                    <th>Statut</th>
+                    <th>Adresse</th>
+                    <th>Commande</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for livraison in precedentes %}
+                <tr>
+                    <td>{{ livraison.id }}</td>
+                    <td>{{ livraison.customer.username }}</td>
+                    <td>{{ livraison.date_sortie|date:"d/m/Y H:i" }}</td>
+                    <td>{{ livraison.get_statut_display }}</td>
+                    <td>
+                        {% if livraison.maps_link %}
+                            <a href="{{ livraison.maps_link }}" target="_blank">{{ livraison.adresse_livraison }}</a>
+                        {% else %}
+                            {{ livraison.adresse_livraison|default:"—" }}
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'commande_detail' livraison.commande.id %}">{{ livraison.commande }}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">Aucune commande précédente.</p>
+    {% endif %}
+</div>
+{% endblock %}

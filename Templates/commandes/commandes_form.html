@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2 class="mb-4">🆕 Nouvelle Commande</h2>
-    <form method="post">
+    <form method="post" id="commandeForm">
         {% csrf_token %}
 
         <!-- Type de commande -->
@@ -42,7 +42,16 @@
             {{ form.comment|add_class:"form-control" }}
         </div>
 
-        <button type="submit" class="btn btn-primary">Passer la commande</button>
+        <!-- Livraison Map Section -->
+        <div id="livraisonSection" style="display:none;">
+            <h4>Choisir l'adresse de livraison</h4>
+            <input type="text" id="searchAddress" class="form-control mb-2" placeholder="Rechercher une adresse...">
+            <div id="map" style="width:100%; height:400px;"></div>
+            <!-- Use Django form field directly -->
+            {{ form.adresse_livraison|add_class:"form-control" }}
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Passer la commande</button>
     </form>
 
     {% if form.errors %}
@@ -51,4 +60,88 @@
     </div>
     {% endif %}
 </div>
+
+<!-- Leaflet CSS/JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelect = document.getElementById('id_type_commande');
+    const livraisonSection = document.getElementById('livraisonSection');
+
+    typeSelect.addEventListener('change', function() {
+        if (typeSelect.value === "livraison") {
+            livraisonSection.style.display = "block";
+            initMap();
+        } else {
+            livraisonSection.style.display = "none";
+        }
+    });
+
+    let mapInitialized = false;
+    function initMap() {
+        if (mapInitialized) return;
+        mapInitialized = true;
+
+        const map = L.map('map').setView([35.777, 10.826], 13); // Monastir
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker = null;
+        const addressInput = document.getElementById('id_adresse_livraison');
+        const searchInput = document.getElementById('searchAddress');
+
+        function placeMarker(lat, lng) {
+            if (marker) marker.setLatLng([lat, lng]);
+            else marker = L.marker([lat, lng]).addTo(map);
+
+            // Reverse geocode to update the Django form input directly
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+                .then(resp => resp.json())
+                .then(data => {
+                    if(data && data.display_name) {
+                        addressInput.value = data.display_name; // ✅ save directly in form
+                    }
+                });
+        }
+
+        // Click on map to place marker
+        map.on('click', function(e) {
+            placeMarker(e.latlng.lat, e.latlng.lng);
+        });
+
+        // Search with debounce
+        let searchTimeout = null;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = searchInput.value;
+            if (!query) return;
+
+            searchTimeout = setTimeout(() => {
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                    .then(resp => resp.json())
+                    .then(results => {
+                        if(results && results.length > 0) {
+                            const first = results[0];
+                            const lat = parseFloat(first.lat);
+                            const lon = parseFloat(first.lon);
+                            map.setView([lat, lon], 16);
+                            placeMarker(lat, lon);
+                        }
+                    });
+            }, 500);
+        });
+    }
+
+    // Initialize map if type already selected
+    if(typeSelect.value === "livraison") {
+        livraisonSection.style.display = "block";
+        initMap();
+    }
+});
+</script>
+
 {% endblock %}

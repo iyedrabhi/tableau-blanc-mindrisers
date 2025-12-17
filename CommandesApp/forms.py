@@ -10,7 +10,11 @@ class CommandeForm(forms.ModelForm):
 
     class Meta:
         model = Commande
-        fields = ["plates", "type_commande", "comment"]
+        fields = ["plates", "type_commande", "comment","adresse_livraison"]
+        widgets = {
+            'adresse_livraison': forms.TextInput(attrs={'readonly': 'readonly'}),
+        }
+
     def clean(self):
         cleaned_data = super().clean()
         return cleaned_data

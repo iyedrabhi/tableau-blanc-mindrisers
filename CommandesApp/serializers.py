@@ -10,5 +10,5 @@ class CommandeSerializer(serializers.ModelSerializer):
     plates = PlateSerializer(many=True, read_only=True)
     class Meta:
         model = Commande
-        fields = ['id', 'customer', 'plates', 'total_price', 'type_commande', 'status', 'qr_code']
+        fields = ['id', 'customer', 'plates', 'total_price', 'type_commande', 'status', 'qr_code', 'adresse_livraison']
         read_only_fields = ['total_price', 'qr_code']

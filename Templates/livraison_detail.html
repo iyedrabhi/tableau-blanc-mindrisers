@@ -1,14 +1,62 @@
-<h2>Détail de la livraison #{{ livraison.id }}</h2>
+{% extends "base.html" %}
 
-<ul>
-    <li><strong>Statut :</strong> {{ livraison.get_statut_display }}</li>
-    <li><strong>Date sortie :</strong> {{ livraison.date_sortie }}</li>
-    <li><strong>Date arrivée :</strong> {{ livraison.date_arrivee|default:"-" }}</li>
-    <li><strong>Commande :</strong> {{ livraison.id_commande }}</li>
-    <li><strong>Livreur :</strong> {{ livraison.id_livreur|default:"Non affecté" }}</li>
-    <li><strong>Client :</strong> {{ livraison.id_client|default:"Non renseigné" }}</li>
-    <li><strong>Adresse :</strong> {{ livraison.adresse_complete }}</li>
-    <li><strong>Localisation GPS :</strong> {{ livraison.latitude }}, {{ livraison.longitude }}</li>
-</ul>
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">📦 Détail de la Livraison #{{ livraison.id }}</h2>
 
-<a href="{% url 'livraison_list' %}">Retour</a>
+    <div class="card shadow-sm p-4 mb-4">
+        <div class="row mb-3">
+            <div class="col-md-6">
+           <p><strong>Statut :</strong>
+    <span class="badge
+        {% if livraison.statut == "En attente" %}bg-warning
+        {% elif livraison.statut == "En préparation" %}bg-secondary
+        {% elif livraison.statut == "Prête" %}bg-primary
+        {% elif livraison.statut == "En cours de livraison" %}bg-info
+        {% elif livraison.statut == "Livrée" %}bg-success
+        {% elif livraison.statut == "Annulée" %}bg-danger
+        {% endif %}
+        fs-6">
+        {{ livraison.statut }}
+            </span>
+                </p>
+
+                </p>
+                <p><strong>Date sortie :</strong> {{ livraison.date_sortie|date:"d/m/Y H:i" }}</p>
+                <p><strong>Date arrivée :</strong> {{ livraison.date_arrivee|default:"-"|date:"d/m/Y H:i" }}</p>
+                <p><strong>Commande :</strong> 
+                    <a href="{% url 'commande_detail' livraison.commande.id %}">#{{ livraison.commande.id }}</a>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Livreur :</strong> 
+                    {% if livraison.id_livreur %}
+                        Livreuer #{{ livraison.id_livreur }}
+                    {% else %}
+                        Non affecté
+                    {% endif %}
+                </p>
+                <p><strong>Client :</strong> 
+                    {% if livraison.customer %}
+                        {{ livraison.customer.username }}
+                    {% else %}
+                        Non renseigné
+                    {% endif %}
+                </p>
+                <p><strong>Adresse :</strong> 
+                    {% if livraison.adresse_livraison %}
+                        <a href="{{ livraison.maps_link }}" target="_blank">{{ livraison.adresse_livraison }}</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <a href="{% url 'livraison_list' %}" class="btn btn-secondary">← Retour à la liste</a>
+            <a href="{% url 'livraison_update' livraison.id %}" class="btn btn-primary ms-2">✏️ Modifier la livraison</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

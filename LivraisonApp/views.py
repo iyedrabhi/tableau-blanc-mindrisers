@@ -47,42 +47,14 @@ def livraison_list(request):
     return render(request, "livraisons_gerant.html", context)
 
 def livraison_list_client(request):
-    livraisons = None
-    id_client = None
-
-    if request.method == 'POST':
-        form = ClientLivraisonSearchForm(request.POST)
-        if form.is_valid():
-            id_client = form.cleaned_data['id_client']
-            livraisons = Livraison.objects.filter(id_client=id_client).order_by('-date_creation')
-    else:
-        form = ClientLivraisonSearchForm()
+    customer = request.user  # take the logged-in user
+    livraisons = Livraison.objects.filter(customer=customer).order_by('-date_sortie')
 
     context = {
-        'form': form,
         'livraisons': livraisons,
-        'id_client': id_client,
+        'customer': customer,
     }
     return render(request, 'livraison_list_client.html', context)
-
-# CREATE
-def livraison_create(request):
-    if request.method == "POST":
-        form = LivraisonForm(request.POST)
-        if form.is_valid():
-            livraison = form.save(commit=False)
-            # ici tu peux encore modifier livraison si besoin
-            livraison.save()
-
-            # 🔴 Redirection vers la page de suivi du client concerné
-            return redirect(
-                "suivi_livraisons_client",
-                client_id=livraison.id_client
-            )
-    else:
-        form = LivraisonForm()
-
-    return render(request, "livraison_form.html", {"form": form})
 
 
 from django.shortcuts import render, redirect
@@ -91,35 +63,17 @@ from .models import Livraison
 
 def creer_livraison_client(request):
     if request.method == 'POST':
-        client_id = request.POST.get('client_id')
-        commande_id = request.POST.get('commande_id')
+        customer = request.POST.get('customer')
+        commande = request.POST.get('commande')
         adresse = request.POST.get('adresse_livraison')
 
         # ⚠️ Tu peux ajouter des validations ici (champs vides, etc.)
-        livraison = Livraison.objects.create(
-            client_id=client_id,
-            commande_id=commande_id,
-            adresse_livraison=adresse,
-            statut='EN_ATTENTE'
-        )
+        livraison = Livraison.objects.create(customer=customer, commande=commande, adresse_livraison=adresse,statut='EN_ATTENTE'  )
 
         # après création, on redirige le client vers le suivi de SES livraisons
-        return redirect('suivi_livraisons_client', client_id=client_id)
+        return redirect('suivi_livraisons_client', customer=customer)
 
     return render(request, 'livraison_form.html')
-def suivi_livraisons_client(request, client_id):
-    """
-    Affiche uniquement les livraisons du client dont l'ID est passé dans l'URL.
-    Ex : /livraisons/client/1/
-    """
-    livraisons = Livraison.objects.filter(id_client=client_id).order_by("-date_sortie")
-
-    context = {
-        "client_id": client_id,
-        "livraisons": livraisons,
-    }
-    # ⚠️ adapte le chemin au VRAI emplacement du template
-    return render(request, "suivi_livraisons_client.html", context)
 
 
 # UPDATE
@@ -128,11 +82,31 @@ def livraison_update(request, pk):
     if request.method == "POST":
         form = LivraisonForm(request.POST, instance=livraison)
         if form.is_valid():
-            form.save()
+            livraison = form.save(commit=False)
+            
+            # Vérifier si statut Livrée mais pas de livreur
+            if livraison.statut == "Livrée" and not livraison.id_livreur:
+                form.add_error('id_livreur', "Vous devez affecter un livreur avant de marquer la livraison comme Livrée.")
+                return render(request, "livraison_form.html", {"form": form, "title": "Modifier la livraison"})
+
+            # si statut Livrée et date_arrivee vide, on remplit la date
+            if livraison.statut == "Livrée" and not livraison.date_arrivee:
+                from django.utils import timezone
+                livraison.date_arrivee = timezone.now()
+
+            livraison.save()
+
+            # Mettre à jour le statut de la commande liée
+            if livraison.commande:
+                livraison.commande.statut = livraison.statut
+                livraison.commande.save()
+
             return redirect("livraison_list")
     else:
         form = LivraisonForm(instance=livraison)
-    return render(request, "livraisons/livraison_form.html", {"form": form, "title": "Modifier la livraison"})
+
+    return render(request, "livraison_form.html", {"form": form, "title": "Modifier la livraison"})
+
 
 # DELETE
 def livraison_delete(request, pk):
@@ -140,7 +114,7 @@ def livraison_delete(request, pk):
     if request.method == "POST":
         livraison.delete()
         return redirect("livraison_list")
-    return render(request, "livraisons/livraison_confirm_delete.html", {"livraison": livraison})
+    return render(request, "livraison_confirm_delete.html", {"livraison": livraison})
 
 
 # =========================
@@ -219,6 +193,8 @@ def livraison_update_row(request, pk):
 
     livraison.save()
     return redirect("livraison_list")
+
+
 def livraison_detail(request, pk):
     livraison = get_object_or_404(Livraison, pk=pk)
     return render(request, "livraison_detail.html", {"livraison": livraison})
@@ -227,90 +203,100 @@ def livraison_annuler(request, pk):
     livraison.statut = "annulee"
     livraison.save()
     return redirect("livraison_list")
-def livraison_create_gerant(request):
-    if request.method == "POST":
-        form = LivraisonForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("livraison_list")
-    else:
-        form = LivraisonForm()
 
-    return render(request, "livraison_form_gerant.html", {"form": form})
 from django.views.decorators.http import require_POST
 
 def livreur_livraisons(request, livreur_id):
-    # Récupérer le filtre statut depuis l'URL (?statut=...)
-    statut_filter = request.GET.get("statut", "").strip()
+    # Récupère les livraisons affectées à ce livreur
+    livraisons_affectees = Livraison.objects.filter(id_livreur=livreur_id)
+    
+    # Récupère les livraisons sans livreur (nouvelles)
+    livraisons_non_affectees = Livraison.objects.filter(id_livreur__isnull=True)
 
-    # Base : livraisons de CE livreur
-    livraisons = Livraison.objects.filter(id_livreur=livreur_id)
+    mes_en_cours = livraisons_affectees.filter(id_livreur=livreur_id).exclude(statut="Livrée")
 
-    # Si un statut est choisi → on filtre
+    nouvelles = Livraison.objects.filter(id_livreur__isnull=True)
+
+    # Combine les deux queryset
+    livraisons = livraisons_affectees | livraisons_non_affectees
+
+    precedentes = livraisons_affectees.filter(statut__in=["Livrée", "Annulée"]).order_by('-date_sortie')
+
+    # Optionnel : trier par date_sortie descendante (nouveautés en premier)
+    livraisons = livraisons.order_by('-date_sortie')
+
+    # Statuts possibles pour le filtre
+    livreur_statuts = [
+        ("En cours de livraison", "En cours de livraison"),
+        ('Livrée', 'Livrée'),
+        ('Annulée', 'Annulée'),
+    ]
+
+    # Filtrage par statut si fourni via GET
+    statut_filter = request.GET.get('statut')
     if statut_filter:
         livraisons = livraisons.filter(statut=statut_filter)
 
-    livraisons = livraisons.order_by("-date_sortie")
-
-    # Statuts disponibles pour la liste déroulante du livreur (pour filtre + changement de statut)
-    livreur_statuts = [
-        ('en_cours', 'En cours'),
-        ('livree', 'Livrée'),
-        ('retour', 'Retour'),
-        ('annulee', 'Annulée'),
-    ]
-
     context = {
-        "livraisons": livraisons,
-        "livreur_id": livreur_id,
-        "livreur_statuts": livreur_statuts,
-        "statut_filter": statut_filter,  # 🔴 pour garder la sélection dans le template
+        'livraisons': livraisons,
+        "nouvelles": nouvelles,
+        'livreur_id': livreur_id,
+        'livreur_statuts': livreur_statuts,
+        'statut_filter': statut_filter,
+        'mes_en_cours': mes_en_cours,
+        'precedentes': precedentes,
+        'livraisons_non_affectees': livraisons_non_affectees,
     }
-    return render(request, "livraisons_livreur.html", context)
 
+    return render(request, 'livreur_livraisons.html', context)
 
+@require_POST
 @require_POST
 def livreur_update_statut_row(request, livreur_id, pk):
     """
-    Le livreur met à jour le statut d'une de ses livraisons.
-    Il ne peut PAS changer le livreur, seulement le statut.
+    Le livreur met à jour le statut de SA livraison.
+    Le statut de la commande liée est synchronisé.
     """
-    livraison = get_object_or_404(Livraison, pk=pk, id_livreur=livreur_id)
+
+    livraison = get_object_or_404(
+        Livraison,
+        pk=pk,
+        id_livreur=livreur_id
+    )
 
     new_statut = request.POST.get("statut")
 
-    # Statuts autorisés pour le livreur (tu peux ajuster la liste)
-    statuts_autorises = {"en_cours", "prete", "en_attente", "livree", "annulee"}
-
-    if new_statut in statuts_autorises:
-        livraison.statut = new_statut
-        livraison.save()
-
-    return redirect("livreur_livraisons", livreur_id=livreur_id)
-@require_POST
-def livreur_update_statut_row(request, livreur_id, pk):
-    """
-    Le livreur met à jour le statut d'une de ses livraisons.
-    Si le statut passe à 'livree', on remplit date_arrivee automatiquement.
-    """
-    livraison = get_object_or_404(Livraison, pk=pk, id_livreur=livreur_id)
-
-    new_statut = request.POST.get("statut")
-
-    # Statuts que le livreur a le droit de mettre
-    statuts_autorises = {"en_cours", "livree", "annulee", "retour"}
+    # ✅ ON GARDE LES STATUTS DU MODÈLE
+    statuts_autorises = {
+        "En cours de livraison",
+        "Livrée",
+        "Annulée",
+    }
 
     if new_statut in statuts_autorises:
         livraison.statut = new_statut
 
-        # ✅ si livrée → on met la date d'arrivée si pas encore définie
-        if new_statut == "livree" and livraison.date_arrivee is None:
+        # ✅ si livrée → date arrivée
+        if new_statut == "Livrée" and livraison.date_arrivee is None:
             livraison.date_arrivee = timezone.now()
 
-        # (optionnel) si on enlève "livrée", on peut décider de ne pas toucher à date_arrivee
-        # elif new_statut != "livree":
-        #     livraison.date_arrivee = None
-
         livraison.save()
 
+        # 🔥 synchronisation avec la commande
+        if livraison.commande:
+            livraison.commande.statut = new_statut
+            livraison.commande.save()
+
+    return redirect("livreur_livraisons", livreur_id=livreur_id)
+
+
+
+def livreur_affecter_livraison(request, livreur_id, livraison_id):
+    livraison = get_object_or_404(Livraison, pk=livraison_id)
+
+    # Affecter le livreur
+    livraison.id_livreur = livreur_id
+    livraison.save()
+
+    # Rediriger vers la liste des livraisons du livreur
     return redirect("livreur_livraisons", livreur_id=livreur_id)
