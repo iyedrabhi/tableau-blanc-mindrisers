@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load plate_filters %}
+
+{% block title %}Modifier Commande{% endblock %}
+
+{% block content %}
+<div class="main-card mx-auto" style="max-width:650px;">
+    
+    <h2 class="restaurant-title mb-4">Modifier la commande #{{ object.id }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Type de commande -->
+        <label class="form-label">Type de commande</label>
+        {{ form.type_commande|add_class:"form-select mb-3" }}
+
+        <!-- Plats -->
+        <label class="form-label">Plats sélectionnés</label>
+
+        <div class="plates-grid mb-4">
+            {% for checkbox in form.plates %}
+                <label class="plate-card">
+                    {{ checkbox.tag }}
+
+                    <img src="{{ checkbox.choice_value|get_plate_image }}" class="plate-img" alt="">
+
+                    <div class="plate-info">
+                        <h4>{{ checkbox.choice_label }}</h4>
+                        <p class="price">{{ checkbox.choice_value|get_plate_price }} DT</p>
+                    </div>
+                </label>
+            {% endfor %}
+        </div>
+
+        <!-- Commentaire -->
+        <label class="form-label">Commentaire</label>
+        {{ form.comment|add_class:"form-control mb-3" }}
+
+        <!-- Boutons -->
+        <button class="btn btn-warning w-100 mb-2">✏️ Mettre à jour</button>
+
+        <a href="{% url 'commande_detail' object.id %}" class="btn btn-secondary w-100">
+            ⬅️ Retour aux détails
+        </a>
+    </form>
+</div>
+{% endblock %}

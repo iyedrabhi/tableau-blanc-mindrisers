@@ -1,0 +1,63 @@
+/* GRID */
+.plates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* PLATE CARD */
+.plate-card {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.1);
+    padding: 0;
+    transition: 0.3s;
+    border: 2px solid transparent;
+}
+
+.plate-card:hover {
+    transform: scale(1.05);
+    border-color: #ffd369;
+}
+
+/* HIDE CHECKBOX */
+.plate-card input[type="checkbox"] {
+    display: none;
+}
+
+/* SELECTED EFFECT */
+.plate-card input[type="checkbox"]:checked + img,
+.plate-card input[type="checkbox"]:checked ~ .plate-info {
+    filter: brightness(1.2);
+}
+
+.plate-card input[type="checkbox"]:checked {
+    border-color: #ffd369;
+}
+
+.plate-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+}
+
+.plate-info {
+    padding: 10px;
+    text-align: center;
+}
+
+.plate-info h4 {
+    margin: 8px 0 6px;
+    color: #ffd369;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.price {
+    color: #fff;
+    font-size: 14px;
+}

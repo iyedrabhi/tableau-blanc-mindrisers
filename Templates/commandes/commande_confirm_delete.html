@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Supprimer la commande</h2>
+    <div class="alert alert-danger mt-3">
+        <p>Êtes-vous sûr de vouloir supprimer la commande <strong>#{{ object.id }}</strong> pour le client <strong>{{ object.customer.username }}</strong> ?</p>
+        <p class="text-muted">Cette action est irréversible.</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <a href="{% url 'commande_list' %}" class="btn btn-secondary">Annuler</a>
+        <button type="submit" class="btn btn-danger">Supprimer</button>
+    </form>
+</div>
+{% endblock %}

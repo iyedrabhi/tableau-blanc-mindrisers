@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">🆕 Nouvelle Commande</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Type de commande -->
+        <div class="mb-3">
+            <label for="id_type_commande" class="form-label">Type de commande</label>
+            {{ form.type_commande|add_class:"form-select" }}
+        </div>
+
+        <!-- Sélection des plats -->
+        <div class="mb-3">
+            <label class="form-label">Sélectionnez les plats</label>
+            <div class="row">
+                {% for plate in form.plates.field.queryset %}
+                <div class="col-md-4 mb-3">
+                    <label class="d-flex align-items-center border p-2 rounded">
+                        <input type="checkbox" name="plates" value="{{ plate.id }}" class="me-2">
+                        {% if plate.image %}
+                            <img src="{{ plate.image.url }}" class="me-2" style="width:60px; height:60px; object-fit:cover;" alt="{{ plate.title }}">
+                        {% endif %}
+                        <div>
+                            <strong>{{ plate.title }}</strong><br>
+                            <small class="text-muted">{{ plate.description }}</small><br>
+                            <span class="badge bg-primary">{{ plate.price }} DT</span>
+                        </div>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Commentaire -->
+        <div class="mb-3">
+            <label for="id_comment" class="form-label">Commentaire (optionnel)</label>
+            {{ form.comment|add_class:"form-control" }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Passer la commande</button>
+    </form>
+
+    {% if form.errors %}
+    <div class="alert alert-danger mt-3">
+        {{ form.errors }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

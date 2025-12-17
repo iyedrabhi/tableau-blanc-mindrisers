@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">📋 Liste des Commandes</h2>
+
+    <div class="row">
+        {% for commande in commandes %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0">🧾 Commande #{{ commande.id }}</h5>
+                        <span class="badge 
+                            {% if commande.status == 'En attente' %}bg-warning
+                            {% elif commande.status == 'En préparation' %}bg-info
+                            {% elif commande.status == 'Prête' %}bg-primary
+                            {% elif commande.status == 'Livrée' %}bg-success
+                            {% elif commande.status == 'Annulée' %}bg-danger
+                            {% endif %} fs-6">
+                            {{ commande.status }}
+                        </span>
+                    </div>
+
+                    <p><strong>Client :</strong> {{ commande.customer.username }}</p>
+                    <p><strong>Total :</strong> {{ commande.total_price }} DT</p>
+                    <p><strong>Type :</strong> {{ commande.type_commande }}</p>
+                    <p><strong>Commentaire :</strong> {{ commande.comment|default:"Aucun" }}</p>
+
+                    <h6 class="mt-3">🍽️ Plats :</h6>
+                    <ul class="list-group mb-3">
+                        {% for plate in commande.plates.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ plate.title }}
+                            <span class="badge bg-primary rounded-pill">{{ plate.price }} DT</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="d-flex justify-content-between flex-wrap">
+                        <a href="{% url 'commande_detail' commande.id %}" class="btn btn-sm btn-info mb-2">Voir</a>
+                        <a href="{% url 'commande_detail_admin' commande.id %}" class="btn btn-sm btn-dark mb-2">Admin Modifier</a>
+                        {% if commande.status == 'En attente' %}
+                            <a href="{% url 'commande_update' commande.id %}" class="btn btn-sm btn-warning mb-2">Modifier</a>
+                            <a href="{% url 'commande_delete' commande.id %}" class="btn btn-sm btn-danger mb-2">Supprimer</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">Aucune commande trouvée.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

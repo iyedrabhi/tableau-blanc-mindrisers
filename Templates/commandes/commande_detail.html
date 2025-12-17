@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">🧾 Commande #{{ commande.id }}</h2>
+        <span class="badge bg-info fs-5">{{ commande.status }}</span>
+    </div>
+
+    <!-- Card Commande -->
+    <div class="card shadow-lg border-0 mb-4" style="border-radius: 15px;">
+        <div class="card-body">
+
+            <!-- Infos Client -->
+            <h4 class="mb-3">👤 Informations Client</h4>
+            <p><strong>Nom :</strong> {{ commande.customer.username }}</p>
+            <p><strong>Type de commande :</strong> {{ commande.type_commande }}</p>
+            <p><strong>Commentaire :</strong> {{ commande.comment|default:"Aucun commentaire" }}</p>
+
+            <hr>
+
+            <!-- Plats -->
+            <h4 class="mb-3">🍽️ Plats commandés</h4>
+            <ul class="list-group mb-3">
+                {% for plate in commande.plates.all %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ plate.title }}</strong><br>
+                            <small class="text-muted">{{ plate.description }}</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill fs-6">{{ plate.price }} DT</span>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <!-- Total -->
+            <h4 class="mt-3">
+                💰 Total : <span class="text-success fw-bold">{{ commande.total_price }} DT</span>
+            </h4>
+
+            <hr>
+
+            <!-- QR Code -->
+            {% if commande.qr_code %}
+            <h4 class="mt-4">📲 Suivez votre commande</h4>
+            <img src="{{ commande.qr_code.url }}" alt="QR Code Commande" width="200" class="mt-2 mb-3 shadow">
+            {% endif %}
+
+        </div>
+    </div>
+
+    <a href="{% url 'commande_list' %}" class="btn btn-secondary mt-2">⬅️ Retour</a>
+
+</div>
+{% endblock %}
